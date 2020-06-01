@@ -1,0 +1,43 @@
+<?xml version = "1.0"?>
+<mirage_db>
+	<launcher_localization>
+		<mirage_version>2.6.3</mirage_version>
+		<main_label>MIRAGE 2.6.3 build 35</main_label>
+		<start_mirage>Start MIRAGE</start_mirage>
+		<start_sdk>Start Mapeditor</start_sdk>
+		<start_server>Start Dedicated Server</start_server>
+		<open_tavern>Open Tavern</open_tavern>
+		<turn_music_off>Turn music off</turn_music_off>
+		<turn_music_on>Turn music on</turn_music_on>
+		<clear_cache>Clear Cache</clear_cache>
+		<open_settings>Open settings folder</open_settings>
+		<kill_processes>Kill PW Processes</kill_processes>
+		<start_pwtool>Start PWTool</start_pwtool>
+		<uninstall>Uninstall MIRAGE</uninstall>
+		<exit>Exit Launcher</exit>
+		<sss_on>Server scripts on</sss_on>
+		<sss_off>Server scripts off</sss_off>
+		<restore_settings>Restore game settings</restore_settings>
+		<create_settings_backup>Create settings backup</create_settings_backup>
+		<mod_name_label>Mod name:</mod_name_label>
+		<update_label>New update available!</update_label>
+		<pw_is_already_running>ParaWorld is already running. Start PWKiller?</pw_is_already_running>
+		<launcher_is_already_running>This programm is already running. Please close the running version first!</launcher_is_already_running>
+		<warning>Warning</warning>
+		<file_not_found>File not found</file_not_found>
+		<backup_not_found>Backup file not found.</backup_not_found>
+		<reset_settings>This will reset your settings.cfg file, and some saved data (like last IP addresses) will be lost. Do you really want to continue?</reset_settings>
+		<reset_settings_success>Settings have been reset.</reset_settings_success>
+		<overwrite_backup>Backup file already exists. Overwrite backup file?</overwrite_backup>
+		<backup_created>Created Settings_SSSS_backup.cfg from settings.cfg. This one will be used when settings.cfg becomes corrupt.</backup_created>
+		<no_cache_found>No cache files found.</no_cache_found>
+		<cache_deleted>The following cache files have been deleted successfully:</cache_deleted>
+	</launcher_localization>
+	<launcher_misc>
+		<is_first_launch>true</is_first_launch>
+	</launcher_misc>
+	<pwkiller_localization>
+		<pwkiller_label>If ParaWorld crashes or does not terminate, press this button!</pwkiller_label>
+		<pwkiller_button>End processes</pwkiller_button>
+	</pwkiller_localization>
+</mirage_db>
