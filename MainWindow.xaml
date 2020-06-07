@@ -24,7 +24,7 @@
         <Button x:Name="ClearCacheButton" Content = "Clear Cache" Margin="50,270,0,0" Style = "{StaticResource MenuButtonStyle}" Click="ClearCache_Click"/>
         <Button x:Name="OpenSettings" Content = "Open settings folder" Margin="50,305,0,0" Style = "{StaticResource MenuButtonStyle}" Click="OpenSettings_Click"/>
         <Button x:Name="KillProcesses" Content = "Kill PW Processes" Margin="50,340,0,0" Style = "{StaticResource MenuButtonStyle}" Click="KillProcesses_Click"/>
-        <Button x:Name="StartPWtool" Content = "Start PWTool" Margin="50,375,0,0" Style = "{StaticResource MenuButtonStyle}" Click="StartPWTool_Click"/>
+        <Button x:Name="SwitchPWTool" Content = "Open PWTool" Margin="50,375,0,0" Style = "{StaticResource MenuButtonStyle}" Click="SwitchPWTool_Click"/>
         <Button x:Name="Uninstall" Content = "Uninstall MIRAGE" Margin="50,410,0,0" Style = "{StaticResource MenuButtonStyle}" Click="Uninstall_Click"/>
         <Button x:Name="Exit" Content = "Exit Launcher" Margin="50,445,0,0" Style = "{StaticResource MenuButtonStyle}" Click="Exit_Click"/>
 

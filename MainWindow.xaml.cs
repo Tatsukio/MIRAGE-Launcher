@@ -35,6 +35,8 @@ namespace MIRAGE_Launcher
         static string VersionTmp = "1.0.0"; //Use localization file to change the version
         static string TurnMuscOff = "Turn music off";
         static string TurnMuscOn = "Turn music on";
+        static string OpenPWTool = "Open PWTool";
+        static string ClosePWTool = "Close PWTool";
         static string Warning = "Warning";
         static string FileNotFound = "File not found";
         static string BackupNotFound = "Backup file not found";
@@ -100,7 +102,8 @@ namespace MIRAGE_Launcher
                 ClearCacheButton.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/clear_cache").InnerText;
                 OpenSettings.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/open_settings").InnerText;
                 KillProcesses.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/kill_processes").InnerText;
-                StartPWtool.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/start_pwtool").InnerText;
+                OpenPWTool = Localization.SelectSingleNode("/mirage_db/launcher_localization/open_pwtool").InnerText;
+                ClosePWTool = Localization.SelectSingleNode("/mirage_db/launcher_localization/close_pwtool").InnerText;
                 Uninstall.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/uninstall").InnerText;
                 Exit.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/exit").InnerText;
                 SSSOnButton.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/sss_on").InnerText;
@@ -110,6 +113,7 @@ namespace MIRAGE_Launcher
                 ModNameLabel.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/mod_name_label").InnerText;
                 UpdateLabel.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/update_label").InnerText;
                 SwitchMusicButton.Content = TurnMuscOff;
+                SwitchPWTool.Content = OpenPWTool;
 
                 PWIsAlreadyRunning = Localization.SelectSingleNode("/mirage_db/launcher_localization/pw_is_already_running").InnerText;
                 LauncherIsAlreadyRunning = Localization.SelectSingleNode("/mirage_db/launcher_localization/launcher_is_already_running").InnerText;
@@ -407,7 +411,7 @@ namespace MIRAGE_Launcher
             //Check for settings.cfg
             if (!Directory.Exists(SettingsDir) || !File.Exists(SettingsPath))
             {
-                MessageBox.Show("If you have never run ParaWorld on this system before, you must run it first to create the necessary files", null, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("If you have never run ParaWorld on this system before, you must run it first to create the necessary files.", null, MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
             //End of settings.cfg check
@@ -603,15 +607,17 @@ namespace MIRAGE_Launcher
             Process.Start(ToolsDir + "/PWKiller.exe");
         }
 
-        private void StartPWTool_Click(object sender, RoutedEventArgs e)
+        private void SwitchPWTool_Click(object sender, RoutedEventArgs e)
         {
             if (PWTool.Visibility == Visibility.Hidden)
             {
                 PWTool.Visibility = Visibility.Visible;
+                SwitchPWTool.Content = ClosePWTool;
             }
             else
             {
                 PWTool.Visibility = Visibility.Hidden;
+                SwitchPWTool.Content = OpenPWTool;
             }
         }
 

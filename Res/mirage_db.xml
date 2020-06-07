@@ -12,7 +12,8 @@
 		<clear_cache>Clear Cache</clear_cache>
 		<open_settings>Open settings folder</open_settings>
 		<kill_processes>Kill PW Processes</kill_processes>
-		<start_pwtool>Start PWTool</start_pwtool>
+		<open_pwtool>Open PWTool</open_pwtool>
+		<close_pwtool>Close PWTool</close_pwtool>
 		<uninstall>Uninstall MIRAGE</uninstall>
 		<exit>Exit Launcher</exit>
 		<sss_on>Server scripts on</sss_on>
