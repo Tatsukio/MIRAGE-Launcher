@@ -50,6 +50,8 @@ namespace MIRAGE_Launcher
         static string CacheDeleted = "The following cache files have been deleted successfully:";
         static string SwitchSSSError = "Failed to switch server side scripts.\nmod_conf.exe not found in\n";
         static string ExeMissing = "Paraworld.exe not found in\n";
+        static string SettingsNotFound = "Settings.cfg not found";
+        static string OnInitError = "";
         static string WhatsNew = "";
 
         public MainWindow()
@@ -60,9 +62,17 @@ namespace MIRAGE_Launcher
                 LoadLocalization();
                 if (IsFirstLaunch == true)
                 {
-                    OnFirstLaunch();
+                    if (!string.IsNullOrEmpty(OnFirstLaunch()))
+                    {
+                        MessageBox.Show(OnFirstLaunch().TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
+                        Application.Current.Shutdown();
+                    }
                 }
                 LoadUI();
+                if (!string.IsNullOrEmpty(OnInitError))
+                {
+                    MessageBox.Show(OnInitError.TrimEnd('\n'), FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 Task TGetMyPublicIp = new Task(GetMyPublicIp);
                 TGetMyPublicIp.Start();
             }
@@ -79,7 +89,7 @@ namespace MIRAGE_Launcher
         {
             if (!File.Exists(MirageDBPath))
             {
-                MessageBox.Show("mirage_db.xml not found in\n" + Path.GetFullPath(MirageExeCurrentDir + "/Texts/"), FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                OnInitError += "mirage_db.xml not found in\n" + Path.GetFullPath(MirageExeCurrentDir + "/Texts/") + "\n\n";
                 return;
             }
             else
@@ -168,7 +178,7 @@ namespace MIRAGE_Launcher
 
             if (!Directory.Exists(BGDir) || !File.Exists(BGDir + "background_" + BGIndex + ".jpg"))
             {
-                MessageBox.Show("Folder\n" + BGDir + "\nnot found or empty.", FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                OnInitError += "Folder " + BGDir + " not found or empty.\n\n";
                 //LauncherBG.Source = new BitmapImage(new Uri(ParaworldBinDir + "/../Data/Base/UI/menue/decoration/loadbg_static.jpg"));
                 LauncherBG.Source = new BitmapImage(new Uri("pack://application:,,,/Res/mirage.ico"));
                 LauncherBG.HorizontalAlignment = HorizontalAlignment.Center;
@@ -184,7 +194,7 @@ namespace MIRAGE_Launcher
 
             if (!File.Exists(MusicDir))
             {
-                MessageBox.Show(MusicDir + "\nnot found.", FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                OnInitError += MusicDir + " not found.\n\n";
             }
             else
             {
@@ -365,39 +375,50 @@ namespace MIRAGE_Launcher
             }
         }
 
-        private void OnFirstLaunch()
+        private string OnFirstLaunch()
         {
+            string ErrorSum = "";
+
             //Check for PW fonts
             string FontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
             if (!File.Exists($"{FontsDir}/trebuc.ttf") || !File.Exists($"{FontsDir}/trebucbd.ttf") || !File.Exists($"{FontsDir}/trebucbi.ttf") || !File.Exists($"{FontsDir}/trebucit.ttf"))
             {
-                MessageBox.Show("Trebuchet MS fonts not found in\n" + FontsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Warning);
+                ErrorSum += "Trebuchet MS fonts not found in\n" + FontsDir + "\n\n";
             }
             //End of PW fonts check
+
+            /*
+            //Check for Tages drivers
+            string TagesDir = Environment.SystemDirectory;
+            if (!File.Exists(TagesDir + "/atksgt.sys") || !File.Exists(TagesDir + "/lirsgt.sys"))
+            {
+                ErrorSum += "Tages drivers not found in\n" + TagesDir + "\n\n";
+            }
+            //End of Tages drivers check
+            */
 
             //Check for BP
             if (Directory.Exists(ParaworldBinDir))
             {
                 if (!Directory.Exists(ParaworldBinDir + "/../Data/BoosterPack1"))
                 {
-                    MessageBox.Show("BoosterPack is not installed, please install it first.\nYou can download it from Para-Welt.com or ParaWorld ModDB.", null, MessageBoxButton.OK, MessageBoxImage.Error);
-                    Application.Current.Shutdown();
+                    ErrorSum += "BoosterPack is not installed, please install it first.\nYou can download it from Para-Welt.com or ParaWorld ModDB.\n\n";
                 }
             }
             //End of BP check
 
             //Check for Win7Fix
-            if (File.Exists(ParaworldBinDir + "\\123\\bin\\Paraworld.exe"))
+            if (File.Exists(ParaworldBinDir + "/Paraworld.exe"))
             {
                 using (MD5 MD5 = MD5.Create())
                 {
-                    using (var stream = File.OpenRead(ParaworldBinDir + "\\123\\bin\\Paraworld.exe"))
+                    using (var stream = File.OpenRead(ParaworldBinDir + "/Paraworld.exe"))
                     {
                         byte[] Win7FixExeMD5 = { 08, 41, 82, 123, 147, 26, 93, 185, 136, 237, 71, 119, 102, 252, 145, 01 };
                         byte[] ExeMD5 = MD5.ComputeHash(stream);
                         if (Win7FixExeMD5.SequenceEqual(ExeMD5) == false)
                         {
-                            MessageBox.Show("Install Win7Fix", Warning, MessageBoxButton.OK, MessageBoxImage.Warning);
+                            ErrorSum += "Install Win7Fix\n\n";
                         }
                     }
                 }
@@ -411,10 +432,11 @@ namespace MIRAGE_Launcher
             //Check for settings.cfg
             if (!Directory.Exists(SettingsDir) || !File.Exists(SettingsPath))
             {
-                MessageBox.Show("If you have never run ParaWorld on this system before, you must run it first to create the necessary files.", null, MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Shutdown();
+                ErrorSum += SettingsNotFound + ". If you have never run ParaWorld on this system before, you must run it first to create the necessary files.\n\n";
             }
             //End of settings.cfg check
+
+            return ErrorSum;
         }
 
         private void SSSOn()
@@ -692,7 +714,7 @@ namespace MIRAGE_Launcher
             }
             else
             {
-                MessageBox.Show("settings.cfg not found in\n" + SettingsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(SettingsNotFound  + " in\n" + SettingsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         //PWTool end
