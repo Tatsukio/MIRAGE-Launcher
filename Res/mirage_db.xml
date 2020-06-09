@@ -26,13 +26,15 @@
 		<launcher_is_already_running>This programm is already running. Please close the running version first!</launcher_is_already_running>
 		<warning>Warning</warning>
 		<file_not_found>File not found</file_not_found>
-		<backup_not_found>Backup file not found.</backup_not_found>
+		<backup_missing>Backup file not found.</backup_missing>
 		<reset_settings>This will reset your settings.cfg file, and some saved data (like last IP addresses) will be lost. Do you really want to continue?</reset_settings>
 		<reset_settings_success>Settings have been reset.</reset_settings_success>
 		<overwrite_backup>Backup file already exists. Overwrite backup file?</overwrite_backup>
 		<backup_created>Created Settings_SSSS_backup.cfg from settings.cfg. This one will be used when settings.cfg becomes corrupt.</backup_created>
 		<no_cache_found>No cache files found.</no_cache_found>
 		<cache_deleted>The following cache files have been deleted successfully:</cache_deleted>
+		<settings_missing>Settings.cfg not found. If you have never run ParaWorld on this system before, you must run it first to create the necessary files.</settings_missing>
+		<bp_missing>BoosterPack is not installed, please install it first. You can download it from Para-Welt.com or ParaWorld ModDB.</bp_missing>
 	</launcher_localization>
 	<launcher_misc>
 		<is_first_launch>true</is_first_launch>

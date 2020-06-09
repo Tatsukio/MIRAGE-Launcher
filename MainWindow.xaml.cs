@@ -4,15 +4,15 @@ using System.Net;
 using System.Xml;
 using System.Linq;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Security.Cryptography;
+//using System.Security.Cryptography;
 
 namespace MIRAGE_Launcher
 {
@@ -39,7 +39,7 @@ namespace MIRAGE_Launcher
         static string ClosePWTool = "Close PWTool";
         static string Warning = "Warning";
         static string FileNotFound = "File not found";
-        static string BackupNotFound = "Backup file not found";
+        static string BackupMissing = "Backup file not found";
         static string OverwriteBackup = "Backup file already exists. Overwrite backup file?";
         static string PWIsAlreadyRunning = "ParaWorld is already running. Start PWKiller?";
         static string LauncherIsAlreadyRunning = "This programm is already running. Please close the running version first!";
@@ -48,10 +48,12 @@ namespace MIRAGE_Launcher
         static string ResetSettings = "This will reset your settings.cfg file, and some saved data (like last IP addresses) will be lost. Do you really want to continue?";
         static string NoCacheFound = "No cache files found.";
         static string CacheDeleted = "The following cache files have been deleted successfully:";
+        static string SettingsMissing = "Settings.cfg not found. If you have never run ParaWorld on this system before, you must run it first to create the necessary files.";
+        static string BPMissing = "BoosterPack is not installed, please install it first. You can download it from Para-Welt.com or ParaWorld ModDB.";
         static string SwitchSSSError = "Failed to switch server side scripts.\nmod_conf.exe not found in\n";
-        static string ExeMissing = "Paraworld.exe not found in\n";
-        static string SettingsNotFound = "Settings.cfg not found";
-        static string OnInitError = "";
+        static string ExeMissing = "ParaWorld executables not found in\n";
+        static string InitError = "";
+        static string FirstLaunchError = "";
         static string WhatsNew = "";
 
         public MainWindow()
@@ -62,17 +64,13 @@ namespace MIRAGE_Launcher
                 LoadLocalization();
                 if (IsFirstLaunch == true)
                 {
-                    if (!string.IsNullOrEmpty(OnFirstLaunch()))
+                    OnFirstLaunch();
+                    if (!string.IsNullOrEmpty(InitError))
                     {
-                        MessageBox.Show(OnFirstLaunch().TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
-                        Application.Current.Shutdown();
+                        MessageBox.Show(InitError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 LoadUI();
-                if (!string.IsNullOrEmpty(OnInitError))
-                {
-                    MessageBox.Show(OnInitError.TrimEnd('\n'), FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                }
                 Task TGetMyPublicIp = new Task(GetMyPublicIp);
                 TGetMyPublicIp.Start();
             }
@@ -89,7 +87,7 @@ namespace MIRAGE_Launcher
         {
             if (!File.Exists(MirageDBPath))
             {
-                OnInitError += "mirage_db.xml not found in\n" + Path.GetFullPath(MirageExeCurrentDir + "/Texts/") + "\n\n";
+                InitError += "mirage_db.xml not found in\n" + Path.GetFullPath(MirageExeCurrentDir + "/Texts/") + "\n\n";
                 return;
             }
             else
@@ -129,13 +127,15 @@ namespace MIRAGE_Launcher
                 LauncherIsAlreadyRunning = Localization.SelectSingleNode("/mirage_db/launcher_localization/launcher_is_already_running").InnerText;
                 Warning = Localization.SelectSingleNode("/mirage_db/launcher_localization/warning").InnerText;
                 FileNotFound = Localization.SelectSingleNode("/mirage_db/launcher_localization/file_not_found").InnerText;
-                BackupNotFound = Localization.SelectSingleNode("/mirage_db/launcher_localization/backup_not_found").InnerText;
+                BackupMissing = Localization.SelectSingleNode("/mirage_db/launcher_localization/backup_missing").InnerText;
                 ResetSettings = Localization.SelectSingleNode("/mirage_db/launcher_localization/reset_settings").InnerText;
                 ResetSettingsSuccess = Localization.SelectSingleNode("/mirage_db/launcher_localization/reset_settings_success").InnerText;
                 OverwriteBackup = Localization.SelectSingleNode("/mirage_db/launcher_localization/overwrite_backup").InnerText;
                 BackupCreated = Localization.SelectSingleNode("/mirage_db/launcher_localization/backup_created").InnerText;
                 NoCacheFound = Localization.SelectSingleNode("/mirage_db/launcher_localization/no_cache_found").InnerText;
                 CacheDeleted = Localization.SelectSingleNode("/mirage_db/launcher_localization/cache_deleted").InnerText;
+                SettingsMissing = Localization.SelectSingleNode("/mirage_db/launcher_localization/settings_missing").InnerText;
+                BPMissing = Localization.SelectSingleNode("/mirage_db/launcher_localization/bp_missing").InnerText;
             }
         }
 
@@ -178,8 +178,7 @@ namespace MIRAGE_Launcher
 
             if (!Directory.Exists(BGDir) || !File.Exists(BGDir + "background_" + BGIndex + ".jpg"))
             {
-                OnInitError += "Folder " + BGDir + " not found or empty.\n\n";
-                //LauncherBG.Source = new BitmapImage(new Uri(ParaworldBinDir + "/../Data/Base/UI/menue/decoration/loadbg_static.jpg"));
+                InitError += "Folder " + BGDir + " not found or empty.\n\n";
                 LauncherBG.Source = new BitmapImage(new Uri("pack://application:,,,/Res/mirage.ico"));
                 LauncherBG.HorizontalAlignment = HorizontalAlignment.Center;
                 LauncherBG.VerticalAlignment = VerticalAlignment.Center;
@@ -194,7 +193,7 @@ namespace MIRAGE_Launcher
 
             if (!File.Exists(MusicDir))
             {
-                OnInitError += MusicDir + " not found.\n\n";
+                InitError += MusicDir + " not found.\n\n";
             }
             else
             {
@@ -347,47 +346,47 @@ namespace MIRAGE_Launcher
 
         private void GetMyPublicIp()
         {
-            WebClient web = new WebClient();
-            string MyIP = web.DownloadString(new Uri("https://ipinfo.io/ip")).Trim();
-            string IPPath = AppDataDir + "/../Local/Temp/paraworld_ip.txt";
-            bool NewIP = true;
-            if (File.Exists(IPPath))
+            using (WebClient GetIP = new WebClient())
             {
-                using (StreamReader ReadIP = new StreamReader(IPPath))
+                string MyIP = GetIP.DownloadString(new Uri("https://ipinfo.io/ip")).Trim();
+                string IPPath = AppDataDir + "/../Local/Temp/paraworld_ip.txt";
+                bool NewIP = true;
+                if (File.Exists(IPPath))
                 {
-                    string PreviousIP = ReadIP.ReadLine();
-                    if (MyIP == PreviousIP)
+                    using (StreamReader ReadIP = new StreamReader(IPPath))
                     {
-                        NewIP = false;
-                    }
-                    else
-                    {
-                        NewIP = true;
+                        string PreviousIP = ReadIP.ReadLine();
+                        if (MyIP == PreviousIP)
+                        {
+                            NewIP = false;
+                        }
+                        else
+                        {
+                            NewIP = true;
+                        }
                     }
                 }
-            }
-            if (NewIP == true)
-            {
-                using (StreamWriter WriteIP = new StreamWriter(IPPath, false, System.Text.Encoding.Default))
+                if (NewIP == true)
                 {
-                    WriteIP.WriteLine(MyIP);
+                    using (StreamWriter WriteIP = new StreamWriter(IPPath, false, System.Text.Encoding.Default))
+                    {
+                        WriteIP.WriteLine(MyIP);
+                    }
                 }
             }
         }
 
-        private string OnFirstLaunch()
+        private void OnFirstLaunch()
         {
-            string ErrorSum = "";
-
+            /*
             //Check for PW fonts
             string FontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
             if (!File.Exists($"{FontsDir}/trebuc.ttf") || !File.Exists($"{FontsDir}/trebucbd.ttf") || !File.Exists($"{FontsDir}/trebucbi.ttf") || !File.Exists($"{FontsDir}/trebucit.ttf"))
             {
-                ErrorSum += "Trebuchet MS fonts not found in\n" + FontsDir + "\n\n";
+                FirstLaunchError += "Trebuchet MS fonts not found in\n" + FontsDir + "\n\n";
             }
             //End of PW fonts check
 
-            /*
             //Check for Tages drivers
             string TagesDir = Environment.SystemDirectory;
             if (!File.Exists(TagesDir + "/atksgt.sys") || !File.Exists(TagesDir + "/lirsgt.sys"))
@@ -395,17 +394,6 @@ namespace MIRAGE_Launcher
                 ErrorSum += "Tages drivers not found in\n" + TagesDir + "\n\n";
             }
             //End of Tages drivers check
-            */
-
-            //Check for BP
-            if (Directory.Exists(ParaworldBinDir))
-            {
-                if (!Directory.Exists(ParaworldBinDir + "/../Data/BoosterPack1"))
-                {
-                    ErrorSum += "BoosterPack is not installed, please install it first.\nYou can download it from Para-Welt.com or ParaWorld ModDB.\n\n";
-                }
-            }
-            //End of BP check
 
             //Check for Win7Fix
             if (File.Exists(ParaworldBinDir + "/Paraworld.exe"))
@@ -418,7 +406,7 @@ namespace MIRAGE_Launcher
                         byte[] ExeMD5 = MD5.ComputeHash(stream);
                         if (Win7FixExeMD5.SequenceEqual(ExeMD5) == false)
                         {
-                            ErrorSum += "Install Win7Fix\n\n";
+                            FirstLaunchError += "Install Win7Fix\n\n";
                         }
                     }
                 }
@@ -428,15 +416,24 @@ namespace MIRAGE_Launcher
 
             }
             //End of Win7Fix check
+            */
+
+            //Check for BP
+            if (Directory.Exists(ParaworldBinDir))
+            {
+                if (!Directory.Exists(ParaworldBinDir + "/../Data/BoosterPack1"))
+                {
+                    FirstLaunchError += BPMissing + "\n\n";
+                }
+            }
+            //End of BP check
 
             //Check for settings.cfg
             if (!Directory.Exists(SettingsDir) || !File.Exists(SettingsPath))
             {
-                ErrorSum += SettingsNotFound + ". If you have never run ParaWorld on this system before, you must run it first to create the necessary files.\n\n";
+                FirstLaunchError += SettingsMissing + "\n\n";
             }
             //End of settings.cfg check
-
-            return ErrorSum;
         }
 
         private void SSSOn()
@@ -471,67 +468,57 @@ namespace MIRAGE_Launcher
             if (e.ClickCount == 2) WindowState = WindowState.Minimized;
         }
 
-        private bool PWRunning()
+        private bool ReadyToStart()
         {
+            if (!string.IsNullOrEmpty(FirstLaunchError))
+            {
+                MessageBox.Show(FirstLaunchError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            if (!File.Exists(ParaworldBinDir + "/Paraworld.exe") || !File.Exists(ParaworldBinDir + "/PWClient.exe"))
+            {
+                MessageBox.Show(ExeMissing + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
             if (Process.GetProcessesByName("Paraworld").Any() || Process.GetProcessesByName("PWClient").Any() || Process.GetProcessesByName("PWServer").Any())
             {
                 if (MessageBox.Show(PWIsAlreadyRunning, Warning, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     StartPWKiller();
                 }
-                return true;
+                return false;
             }
-            return false;
+            if (PlayMusic == true)
+            {
+                SwitchMusic();
+            }
+            SSSOn();
+            ClearCache();
+            StartPWKiller();
+            return true;
         }
 
         private void StartMirage_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(ParaworldBinDir + "/Paraworld.exe"))
+            if (ReadyToStart())
             {
-                MessageBox.Show(ExeMissing + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (!PWRunning())
-            {
-                if (PlayMusic == true) { SwitchMusic(); }
-                SSSOn();
-                ClearCache();
-                StartPWKiller();
                 Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -enable " + ModName);
             }
         }
 
         private void StartSDK_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(ParaworldBinDir + "/Paraworld.exe") || !File.Exists(ParaworldBinDir + "/PWClient.exe"))
+            if (ReadyToStart())
             {
-                MessageBox.Show(ExeMissing + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (!PWRunning())
-            {
-                if (PlayMusic == true) { SwitchMusic(); }
-                SSSOn();
-                ClearCache();
-                StartPWKiller();
                 Process.Start(ParaworldBinDir + "/PWClient.exe", "-leveled -enable boosterpack1 -enable " + ModName);
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -enable " + ModName);
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -enable " + ModName); //To avoid "can't spawn launcher" error
             }
         }
 
         private void StartServer_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(ParaworldBinDir + "/Paraworld.exe"))
+            if (ReadyToStart())
             {
-                MessageBox.Show(ExeMissing + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (!PWRunning())
-            {
-                if (PlayMusic == true) { SwitchMusic(); }
-                SSSOn();
-                ClearCache();
-                StartPWKiller();
                 Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -dedicated");
             }
         }
@@ -680,7 +667,7 @@ namespace MIRAGE_Launcher
             FileInfo SettingsBackup = new FileInfo(SettingsBackupPath);
             if (!SettingsBackup.Exists)
             {
-                MessageBox.Show(BackupNotFound, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(BackupMissing, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (MessageBox.Show(ResetSettings, Warning, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -714,7 +701,7 @@ namespace MIRAGE_Launcher
             }
             else
             {
-                MessageBox.Show(SettingsNotFound  + " in\n" + SettingsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(SettingsMissing, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         //PWTool end
