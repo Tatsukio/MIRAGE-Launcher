@@ -519,7 +519,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -dedicated");
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -dedicated -enable " + ModName);
             }
         }
 
