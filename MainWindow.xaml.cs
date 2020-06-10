@@ -92,50 +92,51 @@ namespace MIRAGE_Launcher
             }
             else
             {
+                string LocalePath = "/mirage_db/launcher_localization";
                 XmlDocument Localization = new XmlDocument();
                 Localization.Load(MirageDBPath);
-                VersionTmp = Localization.SelectSingleNode("/mirage_db/launcher_localization/mirage_version").InnerText;
+                VersionTmp = Localization.SelectSingleNode(LocalePath + "/mirage_version").InnerText;
                 Task TVersionCheck = new Task(VersionCheck);
                 TVersionCheck.Start();
 
                 IsFirstLaunch = Convert.ToBoolean(Localization.SelectSingleNode("/mirage_db/launcher_misc/is_first_launch").InnerText);
 
-                MainLabel.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/main_label").InnerText;
-                StartMirage.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/start_mirage").InnerText;
-                StartSdk.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/start_sdk").InnerText;
-                StartServer.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/start_server").InnerText;
-                OpenTavern.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/open_tavern").InnerText;
-                TurnMuscOff = Localization.SelectSingleNode("/mirage_db/launcher_localization/turn_music_off").InnerText;
-                TurnMuscOn = Localization.SelectSingleNode("/mirage_db/launcher_localization/turn_music_on").InnerText;
-                ClearCacheButton.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/clear_cache").InnerText;
-                OpenSettings.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/open_settings").InnerText;
-                KillProcesses.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/kill_processes").InnerText;
-                OpenPWTool = Localization.SelectSingleNode("/mirage_db/launcher_localization/open_pwtool").InnerText;
-                ClosePWTool = Localization.SelectSingleNode("/mirage_db/launcher_localization/close_pwtool").InnerText;
-                Uninstall.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/uninstall").InnerText;
-                Exit.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/exit").InnerText;
-                SSSOnButton.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/sss_on").InnerText;
-                SSSOffButton.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/sss_off").InnerText;
-                RestoreSettings.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/restore_settings").InnerText;
-                CreateSettingsBackup.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/create_settings_backup").InnerText;
-                ModNameLabel.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/mod_name_label").InnerText;
-                UpdateLabel.Content = Localization.SelectSingleNode("/mirage_db/launcher_localization/update_label").InnerText;
+                MainLabel.Content = Localization.SelectSingleNode(LocalePath + "/main_label").InnerText;
+                StartMirage.Content = Localization.SelectSingleNode(LocalePath + "/start_mirage").InnerText;
+                StartSdk.Content = Localization.SelectSingleNode(LocalePath + "/start_sdk").InnerText;
+                StartServer.Content = Localization.SelectSingleNode(LocalePath + "/start_server").InnerText;
+                OpenTavern.Content = Localization.SelectSingleNode(LocalePath + "/open_tavern").InnerText;
+                TurnMuscOff = Localization.SelectSingleNode(LocalePath + "/turn_music_off").InnerText;
+                TurnMuscOn = Localization.SelectSingleNode(LocalePath + "/turn_music_on").InnerText;
+                ClearCacheButton.Content = Localization.SelectSingleNode(LocalePath + "/clear_cache").InnerText;
+                OpenSettings.Content = Localization.SelectSingleNode(LocalePath + "/open_settings").InnerText;
+                KillProcesses.Content = Localization.SelectSingleNode(LocalePath + "/kill_processes").InnerText;
+                OpenPWTool = Localization.SelectSingleNode(LocalePath + "/open_pwtool").InnerText;
+                ClosePWTool = Localization.SelectSingleNode(LocalePath + "/close_pwtool").InnerText;
+                Uninstall.Content = Localization.SelectSingleNode(LocalePath + "/uninstall").InnerText;
+                Exit.Content = Localization.SelectSingleNode(LocalePath + "/exit").InnerText;
+                SSSOnButton.Content = Localization.SelectSingleNode(LocalePath + "/sss_on").InnerText;
+                SSSOffButton.Content = Localization.SelectSingleNode(LocalePath + "/sss_off").InnerText;
+                RestoreSettings.Content = Localization.SelectSingleNode(LocalePath + "/restore_settings").InnerText;
+                CreateSettingsBackup.Content = Localization.SelectSingleNode(LocalePath + "/create_settings_backup").InnerText;
+                ModNameLabel.Content = Localization.SelectSingleNode(LocalePath + "/mod_name_label").InnerText;
+                UpdateLabel.Content = Localization.SelectSingleNode(LocalePath + "/update_label").InnerText;
                 SwitchMusicButton.Content = TurnMuscOff;
                 SwitchPWTool.Content = OpenPWTool;
 
-                PWIsAlreadyRunning = Localization.SelectSingleNode("/mirage_db/launcher_localization/pw_is_already_running").InnerText;
-                LauncherIsAlreadyRunning = Localization.SelectSingleNode("/mirage_db/launcher_localization/launcher_is_already_running").InnerText;
-                Warning = Localization.SelectSingleNode("/mirage_db/launcher_localization/warning").InnerText;
-                FileNotFound = Localization.SelectSingleNode("/mirage_db/launcher_localization/file_not_found").InnerText;
-                BackupMissing = Localization.SelectSingleNode("/mirage_db/launcher_localization/backup_missing").InnerText;
-                ResetSettings = Localization.SelectSingleNode("/mirage_db/launcher_localization/reset_settings").InnerText;
-                ResetSettingsSuccess = Localization.SelectSingleNode("/mirage_db/launcher_localization/reset_settings_success").InnerText;
-                OverwriteBackup = Localization.SelectSingleNode("/mirage_db/launcher_localization/overwrite_backup").InnerText;
-                BackupCreated = Localization.SelectSingleNode("/mirage_db/launcher_localization/backup_created").InnerText;
-                NoCacheFound = Localization.SelectSingleNode("/mirage_db/launcher_localization/no_cache_found").InnerText;
-                CacheDeleted = Localization.SelectSingleNode("/mirage_db/launcher_localization/cache_deleted").InnerText;
-                SettingsMissing = Localization.SelectSingleNode("/mirage_db/launcher_localization/settings_missing").InnerText;
-                BPMissing = Localization.SelectSingleNode("/mirage_db/launcher_localization/bp_missing").InnerText;
+                PWIsAlreadyRunning = Localization.SelectSingleNode(LocalePath + "/pw_is_already_running").InnerText;
+                LauncherIsAlreadyRunning = Localization.SelectSingleNode(LocalePath + "/launcher_is_already_running").InnerText;
+                Warning = Localization.SelectSingleNode(LocalePath + "/warning").InnerText;
+                FileNotFound = Localization.SelectSingleNode(LocalePath + "/file_not_found").InnerText;
+                BackupMissing = Localization.SelectSingleNode(LocalePath + "/backup_missing").InnerText;
+                ResetSettings = Localization.SelectSingleNode(LocalePath + "/reset_settings").InnerText;
+                ResetSettingsSuccess = Localization.SelectSingleNode(LocalePath + "/reset_settings_success").InnerText;
+                OverwriteBackup = Localization.SelectSingleNode(LocalePath + "/overwrite_backup").InnerText;
+                BackupCreated = Localization.SelectSingleNode(LocalePath + "/backup_created").InnerText;
+                NoCacheFound = Localization.SelectSingleNode(LocalePath + "/no_cache_found").InnerText;
+                CacheDeleted = Localization.SelectSingleNode(LocalePath + "/cache_deleted").InnerText;
+                SettingsMissing = Localization.SelectSingleNode(LocalePath + "/settings_missing").InnerText;
+                BPMissing = Localization.SelectSingleNode(LocalePath + "/bp_missing").InnerText;
             }
         }
 
