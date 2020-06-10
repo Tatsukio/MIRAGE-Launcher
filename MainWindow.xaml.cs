@@ -436,27 +436,22 @@ namespace MIRAGE_Launcher
             //End of settings.cfg check
         }
 
-        private void SSSOn()
+        private void EnableSSS(bool Enable)
         {
             if (!File.Exists(ToolsDir + "/mod_conf.exe"))
             {
                 MessageBox.Show(SwitchSSSError + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            ProcessStartInfo mod_conf_start = new ProcessStartInfo(ToolsDir + "/mod_conf.exe", "SSSOn " + AppDataDir);
-            mod_conf_start.CreateNoWindow = true;
-            mod_conf_start.UseShellExecute = false;
-            Process.Start(mod_conf_start);
-        }
-
-        private void SSSOff()
-        {
-            if (!File.Exists(ToolsDir + "/mod_conf.exe"))
+            ProcessStartInfo mod_conf_start = new ProcessStartInfo(ToolsDir + "/mod_conf.exe");
+            if (Enable)
             {
-                MessageBox.Show(SwitchSSSError + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                mod_conf_start.Arguments = "SSSOn " + AppDataDir;
             }
-            ProcessStartInfo mod_conf_start = new ProcessStartInfo(ToolsDir + "/mod_conf.exe", "SSSOff " + AppDataDir);
+            else
+            {
+                mod_conf_start.Arguments = "SSSOff " + AppDataDir;
+            }
             mod_conf_start.CreateNoWindow = true;
             mod_conf_start.UseShellExecute = false;
             Process.Start(mod_conf_start);
@@ -492,7 +487,7 @@ namespace MIRAGE_Launcher
             {
                 SwitchMusic();
             }
-            SSSOn();
+            EnableSSS(true);
             ClearCache();
             StartPWKiller();
             return true;
@@ -654,12 +649,12 @@ namespace MIRAGE_Launcher
 
         private void SSSOn_Click(object sender, RoutedEventArgs e)
         {
-            SSSOn();
+            EnableSSS(true);
         }
 
         private void SSSOff_Click(object sender, RoutedEventArgs e)
         {
-            SSSOff();
+            EnableSSS(false);
         }
 
         private void RestoreSettings_Click(object sender, RoutedEventArgs e)
