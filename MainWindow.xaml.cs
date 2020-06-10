@@ -62,15 +62,15 @@ namespace MIRAGE_Launcher
             {
                 InitializeComponent();
                 LoadLocalization();
+                LoadUI();
+                if (!string.IsNullOrEmpty(InitError))
+                {
+                    MessageBox.Show(InitError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 if (IsFirstLaunch == true)
                 {
                     OnFirstLaunch();
-                    if (!string.IsNullOrEmpty(InitError))
-                    {
-                        MessageBox.Show(InitError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
                 }
-                LoadUI();
                 Task TGetMyPublicIp = new Task(GetMyPublicIp);
                 TGetMyPublicIp.Start();
             }
