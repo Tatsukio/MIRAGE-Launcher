@@ -498,7 +498,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -enable " + ModName);
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -enable " + ModName);
             }
         }
 
@@ -506,8 +506,8 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/PWClient.exe", "-leveled -enable boosterpack1 -enable " + ModName);
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -enable " + ModName); //To avoid "can't spawn launcher" error
+                Process.Start(ParaworldBinDir + "/PWClient.exe", " -leveled -enable " + ModName);
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -enable " + ModName); //To avoid "can't spawn launcher" error
             }
         }
 
@@ -515,7 +515,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", "-enable boosterpack1 -dedicated -enable " + ModName);
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -dedicated -enable " + ModName);
             }
         }
 
@@ -721,7 +721,7 @@ namespace MIRAGE_Launcher
 
         private void OpenDiscord_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://discordapp.com/invite/vKVxUfT");
+            Process.Start("https://discord.com/invite/Vz6dzx2");
         }
 
         private void OpenPatreon_Click(object sender, RoutedEventArgs e)
