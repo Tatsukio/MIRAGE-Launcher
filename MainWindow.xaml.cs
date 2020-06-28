@@ -726,7 +726,7 @@ namespace MIRAGE_Launcher
 
         private void OpenPatreon_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://www.patreon.com/");
+            Process.Start("https://www.patreon.com/parawelt");
         }
     }
 }
