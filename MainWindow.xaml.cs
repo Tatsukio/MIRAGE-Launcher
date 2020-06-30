@@ -71,6 +71,7 @@ namespace MIRAGE_Launcher
                 {
                     OnFirstLaunch();
                 }
+                Directory.SetCurrentDirectory(ParaworldBinDir);
                 Task TGetMyPublicIp = new Task(GetMyPublicIp);
                 TGetMyPublicIp.Start();
             }
@@ -526,7 +527,6 @@ namespace MIRAGE_Launcher
             if (ReadyToStart())
             {
                 Process.Start(ParaworldBinDir + "/PWClient.exe", " -leveled -enable " + ModName);
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -enable " + ModName); //To avoid "can't spawn launcher" error
             }
         }
 
