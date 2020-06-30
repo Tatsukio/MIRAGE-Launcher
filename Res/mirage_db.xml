@@ -22,10 +22,9 @@
 		<create_settings_backup>Create settings backup</create_settings_backup>
 		<mod_name_label>Mod name:</mod_name_label>
 		<update_label>New update available!</update_label>
+		<warning>Warning</warning>
 		<pw_is_already_running>ParaWorld is already running. Start PWKiller?</pw_is_already_running>
 		<launcher_is_already_running>This programm is already running. Please close the running version first!</launcher_is_already_running>
-		<warning>Warning</warning>
-		<file_not_found>File not found</file_not_found>
 		<backup_missing>Backup file not found.</backup_missing>
 		<reset_settings>This will reset your settings.cfg file, and some saved data (like last IP addresses) will be lost. Do you really want to continue?</reset_settings>
 		<reset_settings_success>Settings have been reset.</reset_settings_success>
@@ -35,6 +34,8 @@
 		<cache_deleted>The following cache files have been deleted successfully:</cache_deleted>
 		<settings_missing>Settings.cfg not found. If you have never run ParaWorld on this system before, you must run it first to create the necessary files.</settings_missing>
 		<bp_missing>BoosterPack is not installed, please install it first. You can download it from Para-Welt.com or ParaWorld ModDB.</bp_missing>
+		<switch_sss_error>Failed to switch server side scripts.</switch_sss_error>
+		<ask_backup>Do you want to try to use the backup file?</ask_backup>
 	</launcher_localization>
 	<launcher_misc>
 		<is_first_launch>true</is_first_launch>

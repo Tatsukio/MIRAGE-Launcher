@@ -43,10 +43,11 @@
                     <DropShadowEffect ShadowDepth="2" Color="#FFEEDBAF" BlurRadius="0"/>
                 </Label.Effect>
             </Label>
+            <Button x:Name="PWToolInfo" Width="18" Height="18" Margin="527,274,153,232" Opacity="0" Click="PWToolInfo_Click"/>
             <Button x:Name="SSSOnButton" Content = "Server scripts on" Margin="324,340,0,0" Style = "{StaticResource MenuButtonStyle}" Click="SSSOn_Click"/>
             <Button x:Name="SSSOffButton" Content = "Server scripts off" Margin="324,375,0,0" Style = "{StaticResource MenuButtonStyle}" Click="SSSOff_Click"/>
-            <Button x:Name="RestoreSettings" Content = "Restore game settings" Margin="324,410,0,0" Style = "{StaticResource MenuButtonStyle}" Click="RestoreSettings_Click"/>
-            <Button x:Name="CreateSettingsBackup" Content = "Create settings backup" Margin="324,445,0,0" Style = "{StaticResource MenuButtonStyle}" Click="CreateSettingsBackup_Click"/>
+            <Button x:Name="RestoreSettingsButton" Content = "Restore game settings" Margin="324,410,0,0" Style = "{StaticResource MenuButtonStyle}" Click="RestoreSettings_Click"/>
+            <Button x:Name="CreateSettingsBackupButton" Content = "Create settings backup" Margin="324,445,0,0" Style = "{StaticResource MenuButtonStyle}" Click="CreateSettingsBackup_Click"/>
             <Label x:Name="ModNameLabel" Content = "Mod name:" HorizontalAlignment="Left" Margin="324,309,0,0" VerticalAlignment="Top" Foreground="#FF998866" FontFamily="Trebuchet MS" FontSize="15" FontWeight="Bold">
                 <Label.Effect>
                     <DropShadowEffect BlurRadius="0" ShadowDepth="1"/>

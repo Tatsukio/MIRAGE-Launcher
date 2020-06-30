@@ -43,15 +43,15 @@ namespace MIRAGE_Launcher
         static string OverwriteBackup = "Backup file already exists. Overwrite backup file?";
         static string PWIsAlreadyRunning = "ParaWorld is already running. Start PWKiller?";
         static string LauncherIsAlreadyRunning = "This programm is already running. Please close the running version first!";
-        static string BackupCreated = "Created Settings_SSSS_backup.cfg from settings.cfg.This one will be used when settings.cfg becomes corrupt.";
-        static string ResetSettingsSuccess = "Replaced settings.cfg with Settings_SSSS_backup.cfg.Some options might have been reset to an old state!";
+        static string BackupCreated = "Created Settings_SSSS_backup.cfg from settings.cfg. This one will be used when settings.cfg becomes corrupt.";
+        static string ResetSettingsSuccess = "Replaced settings.cfg with Settings_SSSS_backup.cfg. Some options might have been reset to an old state!";
         static string ResetSettings = "This will reset your settings.cfg file, and some saved data (like last IP addresses) will be lost. Do you really want to continue?";
         static string NoCacheFound = "No cache files found.";
         static string CacheDeleted = "The following cache files have been deleted successfully:";
         static string SettingsMissing = "Settings.cfg not found. If you have never run ParaWorld on this system before, you must run it first to create the necessary files.";
         static string BPMissing = "BoosterPack is not installed, please install it first. You can download it from Para-Welt.com or ParaWorld ModDB.";
-        static string SwitchSSSError = "Failed to switch server side scripts.\nmod_conf.exe not found in\n";
-        static string ExeMissing = "ParaWorld executables not found in\n";
+        static string SwitchSSSError = "Failed to switch server side scripts.";
+        static string AskBackup = "Do you want to try to use the backup file?";
         static string InitError = "";
         static string FirstLaunchError = "";
         static string WhatsNew = "";
@@ -93,6 +93,8 @@ namespace MIRAGE_Launcher
             else
             {
                 string LocalePath = "/mirage_db/launcher_localization";
+                string ErrorCode = "Code#"; //Line num in mirage_db.xml
+
                 XmlDocument Localization = new XmlDocument();
                 Localization.Load(MirageDBPath);
                 VersionTmp = Localization.SelectSingleNode(LocalePath + "/mirage_version").InnerText;
@@ -117,26 +119,28 @@ namespace MIRAGE_Launcher
                 Exit.Content = Localization.SelectSingleNode(LocalePath + "/exit").InnerText;
                 SSSOnButton.Content = Localization.SelectSingleNode(LocalePath + "/sss_on").InnerText;
                 SSSOffButton.Content = Localization.SelectSingleNode(LocalePath + "/sss_off").InnerText;
-                RestoreSettings.Content = Localization.SelectSingleNode(LocalePath + "/restore_settings").InnerText;
-                CreateSettingsBackup.Content = Localization.SelectSingleNode(LocalePath + "/create_settings_backup").InnerText;
+                RestoreSettingsButton.Content = Localization.SelectSingleNode(LocalePath + "/restore_settings").InnerText;
+                CreateSettingsBackupButton.Content = Localization.SelectSingleNode(LocalePath + "/create_settings_backup").InnerText;
                 ModNameLabel.Content = Localization.SelectSingleNode(LocalePath + "/mod_name_label").InnerText;
                 UpdateLabel.Content = Localization.SelectSingleNode(LocalePath + "/update_label").InnerText;
                 SwitchMusicButton.Content = TurnMuscOff;
                 SwitchPWTool.Content = OpenPWTool;
 
-                PWIsAlreadyRunning = Localization.SelectSingleNode(LocalePath + "/pw_is_already_running").InnerText;
-                LauncherIsAlreadyRunning = Localization.SelectSingleNode(LocalePath + "/launcher_is_already_running").InnerText;
                 Warning = Localization.SelectSingleNode(LocalePath + "/warning").InnerText;
-                FileNotFound = Localization.SelectSingleNode(LocalePath + "/file_not_found").InnerText;
-                BackupMissing = Localization.SelectSingleNode(LocalePath + "/backup_missing").InnerText;
-                ResetSettings = Localization.SelectSingleNode(LocalePath + "/reset_settings").InnerText;
-                ResetSettingsSuccess = Localization.SelectSingleNode(LocalePath + "/reset_settings_success").InnerText;
-                OverwriteBackup = Localization.SelectSingleNode(LocalePath + "/overwrite_backup").InnerText;
-                BackupCreated = Localization.SelectSingleNode(LocalePath + "/backup_created").InnerText;
-                NoCacheFound = Localization.SelectSingleNode(LocalePath + "/no_cache_found").InnerText;
-                CacheDeleted = Localization.SelectSingleNode(LocalePath + "/cache_deleted").InnerText;
-                SettingsMissing = Localization.SelectSingleNode(LocalePath + "/settings_missing").InnerText;
-                BPMissing = Localization.SelectSingleNode(LocalePath + "/bp_missing").InnerText;
+
+                PWIsAlreadyRunning          = ErrorCode + "26\n" + Localization.SelectSingleNode(LocalePath + "/pw_is_already_running").InnerText;
+                LauncherIsAlreadyRunning    = ErrorCode + "27\n" + Localization.SelectSingleNode(LocalePath + "/launcher_is_already_running").InnerText;
+                BackupMissing               = ErrorCode + "28\n" + Localization.SelectSingleNode(LocalePath + "/backup_missing").InnerText;
+                ResetSettings               = ErrorCode + "29\n" + Localization.SelectSingleNode(LocalePath + "/reset_settings").InnerText;
+                ResetSettingsSuccess        = ErrorCode + "30\n" + Localization.SelectSingleNode(LocalePath + "/reset_settings_success").InnerText;
+                OverwriteBackup             = ErrorCode + "31\n" + Localization.SelectSingleNode(LocalePath + "/overwrite_backup").InnerText;
+                BackupCreated               = ErrorCode + "32\n" + Localization.SelectSingleNode(LocalePath + "/backup_created").InnerText;
+                NoCacheFound                = ErrorCode + "33\n" + Localization.SelectSingleNode(LocalePath + "/no_cache_found").InnerText;
+                CacheDeleted                = ErrorCode + "34\n" + Localization.SelectSingleNode(LocalePath + "/cache_deleted").InnerText;
+                SettingsMissing             = ErrorCode + "35\n" + Localization.SelectSingleNode(LocalePath + "/settings_missing").InnerText;
+                BPMissing                   = ErrorCode + "36\n" + Localization.SelectSingleNode(LocalePath + "/bp_missing").InnerText;
+                SwitchSSSError              = ErrorCode + "37\n" + Localization.SelectSingleNode(LocalePath + "/switch_sss_error").InnerText;
+                AskBackup                   = ErrorCode + "38\n" + Localization.SelectSingleNode(LocalePath + "/ask_backup").InnerText;
             }
         }
 
@@ -437,25 +441,37 @@ namespace MIRAGE_Launcher
             //End of settings.cfg check
         }
 
-        private void EnableSSS(bool Enable)
+        private bool EnableSSS(bool Enable)
         {
             if (!File.Exists(ToolsDir + "/mod_conf.exe"))
             {
-                MessageBox.Show(SwitchSSSError + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                MessageBox.Show(SwitchSSSError + "\n" + "Mod_conf.exe not found in\n" + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
-            ProcessStartInfo mod_conf_start = new ProcessStartInfo(ToolsDir + "/mod_conf.exe");
+            Process mod_conf = new Process();
+            mod_conf.StartInfo.FileName = ToolsDir + "/mod_conf.exe";
             if (Enable)
             {
-                mod_conf_start.Arguments = "SSSOn " + AppDataDir;
+                mod_conf.StartInfo.Arguments = "SSSOn " + AppDataDir;
             }
             else
             {
-                mod_conf_start.Arguments = "SSSOff " + AppDataDir;
+                mod_conf.StartInfo.Arguments = "SSSOff " + AppDataDir;
             }
-            mod_conf_start.CreateNoWindow = true;
-            mod_conf_start.UseShellExecute = false;
-            Process.Start(mod_conf_start);
+
+            mod_conf.StartInfo.CreateNoWindow = true;
+            mod_conf.StartInfo.UseShellExecute = false;
+            mod_conf.Start();
+            mod_conf.WaitForExit();
+            if (mod_conf.ExitCode != 0)
+            {
+                if (MessageBox.Show(SwitchSSSError + "\n" + AskBackup, null, MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                {
+                    RestoreSettings();
+                }
+                return false;
+            }
+            return true;
         }
 
         private void DragMove(object sender, MouseButtonEventArgs e)
@@ -473,12 +489,12 @@ namespace MIRAGE_Launcher
             }
             if (!File.Exists(ParaworldBinDir + "/Paraworld.exe") || !File.Exists(ParaworldBinDir + "/PWClient.exe"))
             {
-                MessageBox.Show(ExeMissing + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("ParaWorld executables not found in\n" + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             if (Process.GetProcessesByName("Paraworld").Any() || Process.GetProcessesByName("PWClient").Any() || Process.GetProcessesByName("PWServer").Any())
             {
-                if (MessageBox.Show(PWIsAlreadyRunning, Warning, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (MessageBox.Show(PWIsAlreadyRunning, null, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     StartPWKiller();
                 }
@@ -488,7 +504,10 @@ namespace MIRAGE_Launcher
             {
                 SwitchMusic();
             }
-            EnableSSS(true);
+            if (!EnableSSS(true))
+            {
+                return false;
+            }
             ClearCache();
             StartPWKiller();
             return true;
@@ -648,6 +667,18 @@ namespace MIRAGE_Launcher
             ModName = ModNameTextbox.Text;
         }
 
+        private void PWToolInfo_Click(object sender, RoutedEventArgs e)
+        {
+            if (!File.Exists(ToolsDir + "/mod_conf.exe"))
+            {
+                MessageBox.Show(SwitchSSSError + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            ProcessStartInfo mod_conf_start = new ProcessStartInfo(ToolsDir + "/mod_conf.exe");
+            mod_conf_start.Arguments = "Status " + AppDataDir;
+            Process.Start(mod_conf_start);
+        }
+
         private void SSSOn_Click(object sender, RoutedEventArgs e)
         {
             EnableSSS(true);
@@ -659,6 +690,11 @@ namespace MIRAGE_Launcher
         }
 
         private void RestoreSettings_Click(object sender, RoutedEventArgs e)
+        {
+            RestoreSettings();
+        }
+
+        private void RestoreSettings()
         {
             FileInfo SettingsBackup = new FileInfo(SettingsBackupPath);
             if (!SettingsBackup.Exists)
@@ -674,6 +710,11 @@ namespace MIRAGE_Launcher
         }
 
         private void CreateSettingsBackup_Click(object sender, RoutedEventArgs e)
+        {
+            CreateSettingsBackup();
+        }
+
+        private void CreateSettingsBackup()
         {
             FileInfo Settings = new FileInfo(SettingsPath);
             FileInfo SettingsBackup = new FileInfo(SettingsBackupPath);
