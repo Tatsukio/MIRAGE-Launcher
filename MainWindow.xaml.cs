@@ -30,6 +30,7 @@ namespace MIRAGE_Launcher
         static string SettingsBackupPath = Path.GetFullPath(SettingsDir + "/Settings_SSSS_backup.cfg");
         static string ToolsDir = Path.GetFullPath(ParaworldBinDir + "/../Tools");
         static string MirageDBPath = Path.GetFullPath(MirageExeCurrentDir + "/Texts/mirage_db.xml");
+        static XmlDocument Localization = new XmlDocument();
 
         static string ModName = "MIRAGE";
         static string VersionTmp = "1.0.0"; //Use localization file to change the version
@@ -71,7 +72,6 @@ namespace MIRAGE_Launcher
                 {
                     OnFirstLaunch();
                 }
-                Directory.SetCurrentDirectory(ParaworldBinDir);
                 Task TGetMyPublicIp = new Task(GetMyPublicIp);
                 TGetMyPublicIp.Start();
             }
@@ -93,56 +93,60 @@ namespace MIRAGE_Launcher
             }
             else
             {
-                string LocalePath = "/mirage_db/launcher_localization";
                 string ErrorCode = "Code#"; //Line num in mirage_db.xml
 
-                XmlDocument Localization = new XmlDocument();
                 Localization.Load(MirageDBPath);
-                VersionTmp = Localization.SelectSingleNode(LocalePath + "/mirage_version").InnerText;
+                VersionTmp = Translate("/mirage_version");
                 Task TVersionCheck = new Task(VersionCheck);
                 TVersionCheck.Start();
 
+                MainLabel.Content                   = Translate("/main_label");
+                StartMirage.Content                 = Translate("/start_mirage");
+                StartSdk.Content                    = Translate("/start_sdk");
+                StartServer.Content                 = Translate("/start_server");
+                OpenTavern.Content                  = Translate("/open_tavern");
+                TurnMuscOff                         = Translate("/turn_music_off");
+                TurnMuscOn                          = Translate("/turn_music_on");
+                ClearCacheButton.Content            = Translate("/clear_cache");
+                OpenSettings.Content                = Translate("/open_settings");
+                KillProcesses.Content               = Translate("/kill_processes");
+                OpenPWTool                          = Translate("/open_pwtool");
+                ClosePWTool                         = Translate("/close_pwtool");
+                Uninstall.Content                   = Translate("/uninstall");
+                Exit.Content                        = Translate("/exit");
+                SSSOnButton.Content                 = Translate("/sss_on");
+                SSSOffButton.Content                = Translate("/sss_off");
+                RestoreSettingsButton.Content       = Translate("/restore_settings");
+                CreateSettingsBackupButton.Content  = Translate("/create_settings_backup");
+                ModNameLabel.Content                = Translate("/mod_name_label");
+                UpdateLabel.Content                 = Translate("/update_label");
+                SwitchMusicButton.Content           = TurnMuscOff;
+                SwitchPWTool.Content                = OpenPWTool;
+
+                Warning = Translate("/warning");
+
+                PWIsAlreadyRunning          = ErrorCode + "26\n" + Translate("/pw_is_already_running");
+                LauncherIsAlreadyRunning    = ErrorCode + "27\n" + Translate("/launcher_is_already_running");
+                BackupMissing               = ErrorCode + "28\n" + Translate("/backup_missing");
+                ResetSettings               = ErrorCode + "29\n" + Translate("/reset_settings");
+                ResetSettingsSuccess        = ErrorCode + "30\n" + Translate("/reset_settings_success");
+                OverwriteBackup             = ErrorCode + "31\n" + Translate("/overwrite_backup");
+                BackupCreated               = ErrorCode + "32\n" + Translate("/backup_created");
+                NoCacheFound                = ErrorCode + "33\n" + Translate("/no_cache_found");
+                CacheDeleted                = ErrorCode + "34\n" + Translate("/cache_deleted");
+                SettingsMissing             = ErrorCode + "35\n" + Translate("/settings_missing");
+                BPMissing                   = ErrorCode + "36\n" + Translate("/bp_missing");
+                SwitchSSSError              = ErrorCode + "37\n" + Translate("/switch_sss_error");
+                AskBackup                   = ErrorCode + "38\n" + Translate("/ask_backup");
+
                 IsFirstLaunch = Convert.ToBoolean(Localization.SelectSingleNode("/mirage_db/launcher_misc/is_first_launch").InnerText);
-
-                MainLabel.Content = Localization.SelectSingleNode(LocalePath + "/main_label").InnerText;
-                StartMirage.Content = Localization.SelectSingleNode(LocalePath + "/start_mirage").InnerText;
-                StartSdk.Content = Localization.SelectSingleNode(LocalePath + "/start_sdk").InnerText;
-                StartServer.Content = Localization.SelectSingleNode(LocalePath + "/start_server").InnerText;
-                OpenTavern.Content = Localization.SelectSingleNode(LocalePath + "/open_tavern").InnerText;
-                TurnMuscOff = Localization.SelectSingleNode(LocalePath + "/turn_music_off").InnerText;
-                TurnMuscOn = Localization.SelectSingleNode(LocalePath + "/turn_music_on").InnerText;
-                ClearCacheButton.Content = Localization.SelectSingleNode(LocalePath + "/clear_cache").InnerText;
-                OpenSettings.Content = Localization.SelectSingleNode(LocalePath + "/open_settings").InnerText;
-                KillProcesses.Content = Localization.SelectSingleNode(LocalePath + "/kill_processes").InnerText;
-                OpenPWTool = Localization.SelectSingleNode(LocalePath + "/open_pwtool").InnerText;
-                ClosePWTool = Localization.SelectSingleNode(LocalePath + "/close_pwtool").InnerText;
-                Uninstall.Content = Localization.SelectSingleNode(LocalePath + "/uninstall").InnerText;
-                Exit.Content = Localization.SelectSingleNode(LocalePath + "/exit").InnerText;
-                SSSOnButton.Content = Localization.SelectSingleNode(LocalePath + "/sss_on").InnerText;
-                SSSOffButton.Content = Localization.SelectSingleNode(LocalePath + "/sss_off").InnerText;
-                RestoreSettingsButton.Content = Localization.SelectSingleNode(LocalePath + "/restore_settings").InnerText;
-                CreateSettingsBackupButton.Content = Localization.SelectSingleNode(LocalePath + "/create_settings_backup").InnerText;
-                ModNameLabel.Content = Localization.SelectSingleNode(LocalePath + "/mod_name_label").InnerText;
-                UpdateLabel.Content = Localization.SelectSingleNode(LocalePath + "/update_label").InnerText;
-                SwitchMusicButton.Content = TurnMuscOff;
-                SwitchPWTool.Content = OpenPWTool;
-
-                Warning = Localization.SelectSingleNode(LocalePath + "/warning").InnerText;
-
-                PWIsAlreadyRunning          = ErrorCode + "26\n" + Localization.SelectSingleNode(LocalePath + "/pw_is_already_running").InnerText;
-                LauncherIsAlreadyRunning    = ErrorCode + "27\n" + Localization.SelectSingleNode(LocalePath + "/launcher_is_already_running").InnerText;
-                BackupMissing               = ErrorCode + "28\n" + Localization.SelectSingleNode(LocalePath + "/backup_missing").InnerText;
-                ResetSettings               = ErrorCode + "29\n" + Localization.SelectSingleNode(LocalePath + "/reset_settings").InnerText;
-                ResetSettingsSuccess        = ErrorCode + "30\n" + Localization.SelectSingleNode(LocalePath + "/reset_settings_success").InnerText;
-                OverwriteBackup             = ErrorCode + "31\n" + Localization.SelectSingleNode(LocalePath + "/overwrite_backup").InnerText;
-                BackupCreated               = ErrorCode + "32\n" + Localization.SelectSingleNode(LocalePath + "/backup_created").InnerText;
-                NoCacheFound                = ErrorCode + "33\n" + Localization.SelectSingleNode(LocalePath + "/no_cache_found").InnerText;
-                CacheDeleted                = ErrorCode + "34\n" + Localization.SelectSingleNode(LocalePath + "/cache_deleted").InnerText;
-                SettingsMissing             = ErrorCode + "35\n" + Localization.SelectSingleNode(LocalePath + "/settings_missing").InnerText;
-                BPMissing                   = ErrorCode + "36\n" + Localization.SelectSingleNode(LocalePath + "/bp_missing").InnerText;
-                SwitchSSSError              = ErrorCode + "37\n" + Localization.SelectSingleNode(LocalePath + "/switch_sss_error").InnerText;
-                AskBackup                   = ErrorCode + "38\n" + Localization.SelectSingleNode(LocalePath + "/ask_backup").InnerText;
             }
+        }
+
+        public string Translate(string Text)
+        {
+            string TextPath = "/mirage_db/launcher_localization";
+            return Localization.DocumentElement.SelectSingleNode(TextPath + Text).InnerText;
         }
 
         public void VersionCheck()
@@ -493,11 +497,11 @@ namespace MIRAGE_Launcher
                 MessageBox.Show("ParaWorld executables not found in\n" + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
-            if (Process.GetProcessesByName("Paraworld").Any() || Process.GetProcessesByName("PWClient").Any() || Process.GetProcessesByName("PWServer").Any())
+            if (Process.GetProcessesByName("Paraworld").Any() || Process.GetProcessesByName("PWClient").Any() || Process.GetProcessesByName("PWClient2").Any() || Process.GetProcessesByName("PWServer").Any())
             {
                 if (MessageBox.Show(PWIsAlreadyRunning, null, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    StartPWKiller();
+                    StartPWKiller(false);
                 }
                 return false;
             }
@@ -510,7 +514,8 @@ namespace MIRAGE_Launcher
                 return false;
             }
             ClearCache();
-            StartPWKiller();
+            StartPWKiller(true);
+            Directory.SetCurrentDirectory(ParaworldBinDir);
             return true;
         }
 
@@ -616,10 +621,10 @@ namespace MIRAGE_Launcher
 
         private void KillProcesses_Click(object sender, RoutedEventArgs e)
         {
-            StartPWKiller();
+            StartPWKiller(false);
         }
 
-        private void StartPWKiller()
+        private void StartPWKiller(bool Minimized)
         {
             Process[] AllPWKiller = Process.GetProcessesByName("PWKiller");
             foreach (Process PWKiller in AllPWKiller) { PWKiller.Kill(); }
@@ -628,7 +633,14 @@ namespace MIRAGE_Launcher
                 MessageBox.Show("PWKiller.exe not found in\n" + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            Process.Start(ToolsDir + "/PWKiller.exe");
+
+            ProcessStartInfo PWKiller_start = new ProcessStartInfo(ToolsDir + "/PWKiller.exe");
+            if (Minimized)
+            {
+                Process.Start(ToolsDir + "/PWKiller.exe", "-SSSOffAfterPWExit");
+                PWKiller_start.WindowStyle = ProcessWindowStyle.Minimized;
+            }
+            Process.Start(PWKiller_start);
         }
 
         private void SwitchPWTool_Click(object sender, RoutedEventArgs e)
