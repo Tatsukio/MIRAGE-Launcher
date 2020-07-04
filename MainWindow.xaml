@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MIRAGE_Launcher"
         mc:Ignorable="d"
         Title="MainWindow" Height="526" Width="700" WindowStartupLocation="CenterScreen" Icon="/Res/mirage.ico" WindowStyle="None" ResizeMode="CanMinimize" Cursor="/Res/standard.ani" Background="Black">
     <Grid>
@@ -16,6 +15,7 @@
             </Label.Effect>
         </Label>
         <Rectangle MouseLeftButtonDown="DragMove" HorizontalAlignment="Left" Height="105" VerticalAlignment="Top" Width="700" Fill="#00000000"/>
+
         <Button x:Name="StartMirage" Content = "Start MIRAGE" Margin="50,75,0,0" FontSize="20px" Style = "{StaticResource MenuButtonStyle}" Click="StartMirage_Click" FontWeight="Bold"/>
         <Button x:Name="StartSdk" Content = "Start Mapeditor" Margin="50,110,0,0" Style = "{StaticResource MenuButtonStyle}" Click="StartSDK_Click"/>
         <Button x:Name="StartServer" Content = "Start Dedicated Server" Margin="50,145,0,0" Style = "{StaticResource MenuButtonStyle}" Click="StartServer_Click"/>
@@ -31,10 +31,10 @@
         <Image x:Name="SocialBG" HorizontalAlignment="Right" Height="147" Margin="0,88,0,0" VerticalAlignment="Top" Width="52" Source="/Res/social_buttons_bg.png"/>
         <Image x:Name="ModdbIcon" HorizontalAlignment="Left" Height="28" Width="28"  Style = "{StaticResource ModdbIconStyle}" VerticalAlignment="Top" Source="Res/moddb_icon.png" IsHitTestVisible="False" Panel.ZIndex="2"/>
         <Image x:Name="DiscordIcon" HorizontalAlignment="Left" Height="28" Width="28" Style = "{StaticResource DiscordIconStyle}" VerticalAlignment="Top" Source="Res/discord_icon.png" IsHitTestVisible="False" Panel.ZIndex="2"/>
-        <Image x:Name="SomethingIcon" HorizontalAlignment="Left" Height="28" Width="28" Style = "{StaticResource PatreonIconStyle}" VerticalAlignment="Top" Source="Res/patreon_icon.png" IsHitTestVisible="False" Panel.ZIndex="2"/>
+        <Image x:Name="PatreonIcon" HorizontalAlignment="Left" Height="28" Width="28" Style = "{StaticResource PatreonIconStyle}" VerticalAlignment="Top" Source="Res/patreon_icon.png" IsHitTestVisible="False" Panel.ZIndex="2"/>
         <Button x:Name="OpenModdb" Content="" Margin="658,98,0,0" Style = "{StaticResource SocialButtonStyle}" Panel.ZIndex="1" Click="OpenModdb_Click"/>
         <Button x:Name="OpenDiscord" Content="" Margin="658,142,0,0" Style = "{StaticResource SocialButtonStyle}" Panel.ZIndex="1" Click="OpenDiscord_Click"/>
-        <Button x:Name="OpenPatreon" Content="" Margin="658,186,0,0" Style = "{StaticResource SocialButtonStyle}" Panel.ZIndex="1" Click="OpenPatreon_Click"/>
+        <Button x:Name="OpenPatreon" Margin="658,186,0,0" Style = "{StaticResource SocialButtonStyle}" Panel.ZIndex="1" Click="OpenPatreon_Click"/>
 
         <Grid x:Name="PWTool" Visibility="Hidden">
             <Image x:Name="PWToolBG" HorizontalAlignment="Left" Height="240" Margin="295,270,0,0" VerticalAlignment="Top" Width="257" Source="Res/pwtool_bg.png"/>

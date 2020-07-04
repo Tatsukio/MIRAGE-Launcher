@@ -19,6 +19,7 @@ namespace MIRAGE_Launcher
     public partial class MainWindow : Window
     {
         static MediaPlayer MediaPlayer = new MediaPlayer();
+        static XmlDocument Localization = new XmlDocument();
 
         static bool PlayMusic = true;
         static bool IsFirstLaunch = false;
@@ -30,10 +31,8 @@ namespace MIRAGE_Launcher
         static string SettingsBackupPath = Path.GetFullPath(SettingsDir + "/Settings_SSSS_backup.cfg");
         static string ToolsDir = Path.GetFullPath(ParaworldBinDir + "/../Tools");
         static string MirageDBPath = Path.GetFullPath(MirageExeCurrentDir + "/Texts/mirage_db.xml");
-        static XmlDocument Localization = new XmlDocument();
 
         static string ModName = "MIRAGE";
-        static string VersionTmp = "1.0.0"; //Use localization file to change the version
         static string TurnMuscOff = "Turn music off";
         static string TurnMuscOn = "Turn music on";
         static string OpenPWTool = "Open PWTool";
@@ -86,18 +85,11 @@ namespace MIRAGE_Launcher
 
         private void LoadLocalization()
         {
-            if (!File.Exists(MirageDBPath))
+            if (FileFound(MirageDBPath))
             {
-                InitError += "mirage_db.xml not found in\n" + Path.GetFullPath(MirageExeCurrentDir + "/Texts/") + "\n\n";
-                return;
-            }
-            else
-            {
-                string ErrorCode = "Code#"; //Line num in mirage_db.xml
-
                 Localization.Load(MirageDBPath);
-                VersionTmp = Translate("/mirage_version");
-                Task TVersionCheck = new Task(VersionCheck);
+                string Version = Translate("/mirage_version");
+                Task TVersionCheck = new Task(() => VersionCheck(Version));
                 TVersionCheck.Start();
 
                 MainLabel.Content                   = Translate("/main_label");
@@ -125,6 +117,8 @@ namespace MIRAGE_Launcher
 
                 Warning = Translate("/warning");
 
+                string ErrorCode = "Code#"; //Line num in mirage_db.xml
+
                 PWIsAlreadyRunning          = ErrorCode + "26\n" + Translate("/pw_is_already_running");
                 LauncherIsAlreadyRunning    = ErrorCode + "27\n" + Translate("/launcher_is_already_running");
                 BackupMissing               = ErrorCode + "28\n" + Translate("/backup_missing");
@@ -149,9 +143,9 @@ namespace MIRAGE_Launcher
             return Localization.DocumentElement.SelectSingleNode(TextPath + Text).InnerText;
         }
 
-        public void VersionCheck()
+        public void VersionCheck(string Version)
         {
-            Version MirageVersion = new Version(VersionTmp);
+            Version MirageVersion = new Version(Version);
             using (WebClient VersionPage = new WebClient())
             {
                 VersionPage.Proxy = new WebProxy();
@@ -448,35 +442,34 @@ namespace MIRAGE_Launcher
 
         private bool EnableSSS(bool Enable)
         {
-            if (!File.Exists(ToolsDir + "/mod_conf.exe"))
+            if (FileFound(ToolsDir + "/mod_conf.exe"))
             {
-                MessageBox.Show(SwitchSSSError + "\n" + "Mod_conf.exe not found in\n" + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-            Process mod_conf = new Process();
-            mod_conf.StartInfo.FileName = ToolsDir + "/mod_conf.exe";
-            if (Enable)
-            {
-                mod_conf.StartInfo.Arguments = "SSSOn " + AppDataDir;
-            }
-            else
-            {
-                mod_conf.StartInfo.Arguments = "SSSOff " + AppDataDir;
-            }
-
-            mod_conf.StartInfo.CreateNoWindow = true;
-            mod_conf.StartInfo.UseShellExecute = false;
-            mod_conf.Start();
-            mod_conf.WaitForExit();
-            if (mod_conf.ExitCode != 0)
-            {
-                if (MessageBox.Show(SwitchSSSError + "\n" + AskBackup, null, MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                Process mod_conf = new Process();
+                mod_conf.StartInfo.FileName = ToolsDir + "/mod_conf.exe";
+                if (Enable)
                 {
-                    RestoreSettings();
+                    mod_conf.StartInfo.Arguments = "SSSOn " + AppDataDir;
                 }
-                return false;
+                else
+                {
+                    mod_conf.StartInfo.Arguments = "SSSOff " + AppDataDir;
+                }
+
+                mod_conf.StartInfo.CreateNoWindow = true;
+                mod_conf.StartInfo.UseShellExecute = false;
+                mod_conf.Start();
+                mod_conf.WaitForExit();
+                if (mod_conf.ExitCode != 0)
+                {
+                    if (MessageBox.Show(SwitchSSSError + "\n" + AskBackup, null, MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    {
+                        RestoreSettings();
+                    }
+                    return false;
+                }
+                return true;
             }
-            return true;
+            return false;
         }
 
         private void DragMove(object sender, MouseButtonEventArgs e)
@@ -492,9 +485,8 @@ namespace MIRAGE_Launcher
                 MessageBox.Show(FirstLaunchError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
-            if (!File.Exists(ParaworldBinDir + "/Paraworld.exe") || !File.Exists(ParaworldBinDir + "/PWClient.exe"))
+            if (!FileFound(ParaworldBinDir + "/Paraworld.exe") || !FileFound(ParaworldBinDir + "/PWClient.exe"))
             {
-                MessageBox.Show("ParaWorld executables not found in\n" + ParaworldBinDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             if (Process.GetProcessesByName("Paraworld").Any() || Process.GetProcessesByName("PWClient").Any() || Process.GetProcessesByName("PWClient2").Any() || Process.GetProcessesByName("PWServer").Any())
@@ -626,21 +618,16 @@ namespace MIRAGE_Launcher
 
         private void StartPWKiller(bool Minimized)
         {
-            Process[] AllPWKiller = Process.GetProcessesByName("PWKiller");
-            foreach (Process PWKiller in AllPWKiller) { PWKiller.Kill(); }
-            if (!File.Exists(ToolsDir + "/PWKiller.exe"))
+            if (FileFound(ToolsDir + "/PWKiller.exe"))
             {
-                MessageBox.Show("PWKiller.exe not found in\n" + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                ProcessStartInfo PWKiller_start = new ProcessStartInfo(ToolsDir + "/PWKiller.exe");
+                if (Minimized)
+                {
+                    Process.Start(ToolsDir + "/PWKiller.exe", "-SSSOffAfterPWExit");
+                    PWKiller_start.WindowStyle = ProcessWindowStyle.Minimized;
+                }
+                Process.Start(PWKiller_start);
             }
-
-            ProcessStartInfo PWKiller_start = new ProcessStartInfo(ToolsDir + "/PWKiller.exe");
-            if (Minimized)
-            {
-                Process.Start(ToolsDir + "/PWKiller.exe", "-SSSOffAfterPWExit");
-                PWKiller_start.WindowStyle = ProcessWindowStyle.Minimized;
-            }
-            Process.Start(PWKiller_start);
         }
 
         private void SwitchPWTool_Click(object sender, RoutedEventArgs e)
@@ -659,13 +646,11 @@ namespace MIRAGE_Launcher
 
         private void Uninstall_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(ParaworldBinDir + "/../Uninstall MIRAGE.exe"))
+            if (FileFound(ParaworldBinDir + "/../Uninstall MIRAGE.exe"))
             {
-                MessageBox.Show("Uninstall MIRAGE.exe not found in " + Path.GetFullPath(ParaworldBinDir + "/../"), FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                Process.Start(ParaworldBinDir + "/../Uninstall MIRAGE.exe");
+                Application.Current.Shutdown();
             }
-            Process.Start(ParaworldBinDir + "/../Uninstall MIRAGE.exe");
-            Application.Current.Shutdown();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -681,14 +666,12 @@ namespace MIRAGE_Launcher
 
         private void PWToolInfo_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(ToolsDir + "/mod_conf.exe"))
+            if (FileFound(ToolsDir + "/mod_conf.exe"))
             {
-                MessageBox.Show(SwitchSSSError + ToolsDir, FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                ProcessStartInfo mod_conf_start = new ProcessStartInfo(ToolsDir + "/mod_conf.exe");
+                mod_conf_start.Arguments = "Status " + AppDataDir;
+                Process.Start(mod_conf_start);
             }
-            ProcessStartInfo mod_conf_start = new ProcessStartInfo(ToolsDir + "/mod_conf.exe");
-            mod_conf_start.Arguments = "Status " + AppDataDir;
-            Process.Start(mod_conf_start);
         }
 
         private void SSSOn_Click(object sender, RoutedEventArgs e)
@@ -780,6 +763,16 @@ namespace MIRAGE_Launcher
         private void OpenPatreon_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("https://www.patreon.com/parawelt");
+        }
+
+        private bool FileFound(string Filename)
+        {
+            if (File.Exists(Filename))
+            {
+                return true;
+            }
+            MessageBox.Show(Path.GetFullPath(Filename) + " not found.", FileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
     }
 }
