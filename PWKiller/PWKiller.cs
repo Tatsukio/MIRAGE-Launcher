@@ -8,7 +8,7 @@ namespace PWKiller
         public PWKiller()
         {
             InitializeComponent();
-            if(Program.LoadLocale())
+            if (Program.LoadLocale())
             {
                 SetLocale();
             }

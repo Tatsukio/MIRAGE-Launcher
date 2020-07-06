@@ -149,12 +149,13 @@ namespace MIRAGE_Launcher
             using (WebClient VersionPage = new WebClient())
             {
                 VersionPage.Proxy = new WebProxy();
+                //string FullSiteVersion = VersionPage.DownloadString("https://para-welt.com/mirage/version.txt");
                 string FullSiteVersion = VersionPage.DownloadString("https://para-welt.com/mirage/version.txt");
                 //versioncheck	MIRAGE 2.6.2	14	0
-                string[] vars = FullSiteVersion.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                if (vars[0] == "versioncheck" && vars != null)
+                string[] Info = FullSiteVersion.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (Info[0] == "versioncheck" && Info != null)
                 {
-                    string[] SiteModVersion = vars[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] SiteModVersion = Info[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     Version MirageSiteVersion = new Version(SiteModVersion[1]);
                     switch (MirageVersion.CompareTo(MirageSiteVersion))
                     {
@@ -165,7 +166,7 @@ namespace MIRAGE_Launcher
                             //MirageVersion > MirageSiteVersion
                             break;
                         case -1:
-                            WhatsNew = vars[2];
+                            WhatsNew = Info[4];
                             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => ShowUpdateWindow()));
                             break;
                     }
