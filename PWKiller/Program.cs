@@ -55,10 +55,11 @@ namespace PWKiller
                 {
                     if (!Process.GetProcessesByName(Processes[1]).Any())
                     {
-                        if (!Process.GetProcessesByName(Processes[2]).Any())
-                        {
-                            break;
-                        }
+                        break;
+                        //if (!Process.GetProcessesByName(Processes[2]).Any())
+                        //{
+                        //    break;
+                        //}
                     }
                 }
                 System.Threading.Thread.Sleep(1000);

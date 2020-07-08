@@ -30,7 +30,7 @@ namespace MIRAGE_Launcher
         static string SettingsPath = Path.GetFullPath(SettingsDir + "/settings.cfg");
         static string SettingsBackupPath = Path.GetFullPath(SettingsDir + "/Settings_SSSS_backup.cfg");
         static string ToolsDir = Path.GetFullPath(ParaworldBinDir + "/../Tools");
-        static string MirageDBPath = Path.GetFullPath(MirageExeCurrentDir + "/Texts/mirage_db.xml");
+        static string MirageDBPath = Path.GetFullPath(MirageExeCurrentDir + "/Launcher/mirage_db.xml");
 
         static string ModName = "MIRAGE";
         static string TurnMuscOff = "Turn music off";
@@ -67,9 +67,13 @@ namespace MIRAGE_Launcher
                 {
                     MessageBox.Show(InitError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                if (IsFirstLaunch == true)
+                if (IsFirstLaunch)
                 {
-                    OnFirstLaunch();
+                    if (OnFirstLaunch())
+                    {
+                        Localization.DocumentElement.SelectSingleNode("/mirage_db/launcher_misc/is_first_launch").InnerText = false.ToString();
+                        Localization.Save(MirageDBPath);
+                    }
                 }
                 Task TGetMyPublicIp = new Task(GetMyPublicIp);
                 TGetMyPublicIp.Start();
@@ -150,7 +154,7 @@ namespace MIRAGE_Launcher
             {
                 VersionPage.Proxy = new WebProxy();
                 //string FullSiteVersion = VersionPage.DownloadString("https://para-welt.com/mirage/version.txt");
-                string FullSiteVersion = VersionPage.DownloadString("https://para-welt.com/mirage/version.txt");
+                string FullSiteVersion = VersionPage.DownloadString("https://raw.githubusercontent.com/Tatsukio/MIRAGE-Launcher/master/Res/updateinfo.txt");
                 //versioncheck	MIRAGE 2.6.2	14	0
                 string[] Info = FullSiteVersion.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
                 if (Info[0] == "versioncheck" && Info != null)
@@ -179,7 +183,7 @@ namespace MIRAGE_Launcher
             Random Random = new Random();
             int BGIndex = Random.Next(1, 85);
             string MusicDir = Path.GetFullPath(ParaworldBinDir + "/../Data/Base/Audio/Music/");
-            string BGDir = Path.GetFullPath(ParaworldBinDir + "/../Data/MIRAGE/launcher_misc/backgrounds/");
+            string BGDir = Path.GetFullPath(ParaworldBinDir + "/../Data/MIRAGE/Launcher/Backgrounds/");
 
             if (!Directory.Exists(BGDir) || !File.Exists(BGDir + "background_" + BGIndex + ".jpg"))
             {
@@ -381,8 +385,10 @@ namespace MIRAGE_Launcher
             }
         }
 
-        private void OnFirstLaunch()
+        private bool OnFirstLaunch()
         {
+            bool BPCheck = false;
+            bool SettingsCheck = false;
             /*
             //Check for PW fonts
             string FontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
@@ -426,7 +432,11 @@ namespace MIRAGE_Launcher
             //Check for BP
             if (Directory.Exists(ParaworldBinDir))
             {
-                if (!Directory.Exists(ParaworldBinDir + "/../Data/BoosterPack1"))
+                if (Directory.Exists(ParaworldBinDir + "/../Data/BoosterPack1"))
+                {
+                    BPCheck = true;
+                }
+                else
                 {
                     FirstLaunchError += BPMissing + "\n\n";
                 }
@@ -434,11 +444,21 @@ namespace MIRAGE_Launcher
             //End of BP check
 
             //Check for settings.cfg
-            if (!Directory.Exists(SettingsDir) || !File.Exists(SettingsPath))
+            if (Directory.Exists(SettingsDir) && File.Exists(SettingsPath))
+            {
+                SettingsCheck = true;
+            }
+            else
             {
                 FirstLaunchError += SettingsMissing + "\n\n";
             }
             //End of settings.cfg check
+
+            if (BPCheck && SettingsCheck)
+            {
+                return true;
+            }
+            return false;
         }
 
         private bool EnableSSS(bool Enable)
@@ -455,7 +475,6 @@ namespace MIRAGE_Launcher
                 {
                     mod_conf.StartInfo.Arguments = "SSSOff " + AppDataDir;
                 }
-
                 mod_conf.StartInfo.CreateNoWindow = true;
                 mod_conf.StartInfo.UseShellExecute = false;
                 mod_conf.Start();
@@ -741,14 +760,14 @@ namespace MIRAGE_Launcher
 
         private void ShowUpdateWindow()
         {
-            UpdateLog.Text = WhatsNew.Replace(" ●", "\n●");
+            UpdateLog.Text = "● " + WhatsNew.Replace(";", "\n● ");
             SocialBG.Visibility = Visibility.Hidden;
             Update.Visibility = Visibility.Visible;
         }
 
         private void OpenUpdatePage_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://para-welt.com/mirage/?version=14");
+            Process.Start("https://para-welt.com/mirage/?version=15");
         }
 
         private void OpenModdb_Click(object sender, RoutedEventArgs e)
