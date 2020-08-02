@@ -1,9 +1,9 @@
 <?xml version = "1.0"?>
-<mirage_db>
+<launcher_db>
 	<launcher_localization>
-		<mirage_version>2.6.3</mirage_version>
+		<mod_version>2.6.3</mod_version>
 		<main_label>MIRAGE 2.6.3 build 35</main_label>
-		<start_mirage>Start MIRAGE</start_mirage>
+		<start_mod>Start MIRAGE</start_mod>
 		<start_sdk>Start Mapeditor</start_sdk>
 		<start_server>Start Dedicated Server</start_server>
 		<open_tavern>Open Tavern</open_tavern>
@@ -44,4 +44,4 @@
 		<pwkiller_label>If ParaWorld crashes or does not terminate, press this button!</pwkiller_label>
 		<pwkiller_button>End processes</pwkiller_button>
 	</pwkiller_localization>
-</mirage_db>
+</launcher_db>

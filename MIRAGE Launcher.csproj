@@ -64,24 +64,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Res\ButtonsStyle.xaml">
+    <Page Include="Launcher.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Res\LauncherStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Launcher.xaml.cs">
+      <DependentUpon>Launcher.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ModManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -118,276 +118,280 @@
     <Resource Include="Res\mirage.ico" />
     <Resource Include="Res\moddb_icon.png" />
     <Resource Include="Res\patreon_icon.png" />
-    <Resource Include="Res\pwtool_bg.png" />
     <Resource Include="Res\social_buttons_bg.png" />
     <Resource Include="Res\social_button_down.png" />
     <Resource Include="Res\social_button_hover.png" />
-    <Resource Include="Res\textbox_bg.png" />
     <Resource Include="Res\update_bg.png" />
     <Resource Include="Res\update_icon.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Launcher\mirage_db.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Res\checkbox_checked_locked.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Launcher\Backgrounds\background_1.jpg">
+    <Resource Include="Res\checkbox_checked.png" />
+    <Resource Include="Res\checkbox_empty.png" />
+    <Resource Include="Res\checkbox_pressed.png" />
+    <Resource Include="Res\modlist_bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Launcher\Backgrounds\background_1.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_10.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_10.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_11.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_11.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_12.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_12.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_13.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_13.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_14.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_14.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_15.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_15.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_16.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_16.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_17.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_17.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_18.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_18.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_19.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_19.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_2.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_2.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_20.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_20.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_21.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_21.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_22.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_22.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_23.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_23.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_24.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_24.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_25.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_25.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_26.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_26.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_27.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_27.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_28.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_28.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_29.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_29.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_3.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_3.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_30.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_30.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_31.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_31.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_32.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_32.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_33.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_33.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_34.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_34.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_35.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_35.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_36.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_36.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_37.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_37.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_38.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_38.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_39.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_39.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_4.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_4.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_40.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_40.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_41.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_41.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_42.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_42.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_43.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_43.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_44.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_44.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_45.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_45.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_46.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_46.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_47.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_47.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_48.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_48.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_49.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_49.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_5.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_5.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_50.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_50.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_51.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_51.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_52.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_52.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_53.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_53.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_54.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_54.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_55.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_55.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_56.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_56.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_57.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_57.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_58.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_58.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_59.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_59.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_6.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_6.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_60.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_60.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_61.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_61.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_62.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_62.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_63.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_63.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_64.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_64.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_65.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_65.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_66.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_66.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_67.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_67.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_68.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_68.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_69.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_69.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_7.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_7.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_70.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_70.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_71.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_71.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_72.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_72.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_73.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_73.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_74.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_74.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_75.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_75.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_76.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_76.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_77.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_77.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_78.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_78.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_79.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_79.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_8.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_8.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_80.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_80.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_81.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_81.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_82.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_82.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_83.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_83.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_84.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_84.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_85.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_85.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Launcher\Backgrounds\background_9.jpg">
+    </None>
+    <None Include="Launcher\Backgrounds\background_9.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="Launcher\launcher_db.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
