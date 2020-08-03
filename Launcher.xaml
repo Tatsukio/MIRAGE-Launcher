@@ -18,7 +18,7 @@
         <Rectangle MouseLeftButtonDown="DragMove" HorizontalAlignment="Left" Height="105" VerticalAlignment="Top" Width="700" Fill="#00000000"/>
 
         <Grid x:Name="Menu" Visibility="Visible">
-            <Button x:Name="StartMirage" Content = "Start MIRAGE" Margin="50,75,0,0" FontSize="20px" Style = "{StaticResource MenuButtonStyle}" Click="StartMirage_Click" FontWeight="Bold"/>
+            <Button x:Name="StartMirage" Content = "Start ParaWorld" Margin="50,75,0,0" FontSize="20px" Style = "{StaticResource MenuButtonStyle}" Click="StartMirage_Click" FontWeight="Bold"/>
             <Button x:Name="StartSdk" Content = "Start Mapeditor" Margin="50,110,0,0" Style = "{StaticResource MenuButtonStyle}" Click="StartSDK_Click"/>
             <Button x:Name="StartServer" Content = "Start Dedicated Server" Margin="50,145,0,0" Style = "{StaticResource MenuButtonStyle}" Click="StartServer_Click"/>
             <Button x:Name="OpenTavern" Content = "Open Tavern" Margin="50,180,0,0" Style = "{StaticResource MenuButtonStyle}" Click="OpenTavern_Click"/>
@@ -80,7 +80,7 @@
                         <GridViewColumn>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Margin="0" VerticalAlignment="Center" IsChecked="{Binding ModEnabled}" Style = "{StaticResource CheckBoxStyle}" IsEnabled = "{Binding CheckBoxEnabled}"/>
+                                    <CheckBox Margin="0" VerticalAlignment="Center" IsChecked="{Binding ModEnabled}" Style = "{StaticResource CheckBoxStyle}" IsEnabled = "{Binding ModCheckBoxEnabled}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -111,7 +111,7 @@
                     <DropShadowEffect ShadowDepth="2" Color="#FFEEDBAF" BlurRadius="0"/>
                 </TextBlock.Effect>
             </TextBlock>
-            <TextBlock x:Name="UpdateLog" Text="{Binding WhatsNew}" HorizontalAlignment="Left" Margin="329,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="145" Width="306" FontFamily="Trebuchet MS" FontWeight="Bold" FontSize="15" Foreground="#FF998866"/>
+            <TextBlock x:Name="UpdateLog" HorizontalAlignment="Left" Margin="329,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="145" Width="306" FontFamily="Trebuchet MS" FontWeight="Bold" FontSize="15" Foreground="#FF998866"/>
             <Image x:Name="UpdateIcon" HorizontalAlignment="Left" Height="28" Width="28" Style = "{StaticResource UpdateIconStyle}" VerticalAlignment="Top" Source="/Res/update_icon.png" IsHitTestVisible="False" Panel.ZIndex="1"/>
             <Button x:Name="OpenUpdatePage" Content="" Margin="658,54,0,0" Style = "{StaticResource SocialButtonStyle}" Click="OpenUpdatePage_Click">
                 <Button.Triggers>

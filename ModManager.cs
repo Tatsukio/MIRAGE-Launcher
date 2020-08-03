@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using static MIRAGE_Launcher.MainWindow;
 
@@ -11,17 +13,34 @@ namespace MIRAGE_Launcher
     class ModManager
     {
         public static ObservableCollection<ModInfo> ModList = new ObservableCollection<ModInfo>();
-        public class ModInfo
+        public class ModInfo : INotifyPropertyChanged
         {
-            public bool ModEnabled { get; set; }
+            private bool modEnabled;
+            public bool ModEnabled
+            {
+                get { return modEnabled; }
+                set { modEnabled = value; OnPropertyChanged(); GetEnabledMods(); }
+            }
 
-            public bool ModCheckBoxEnabled { get; set; }
+            private bool modCheckBoxEnabled;
+            public bool ModCheckBoxEnabled
+            {
+                get { return modCheckBoxEnabled; }
+                set { modCheckBoxEnabled = value; OnPropertyChanged(); }
+            }
 
             public string ModName { get; set; }
 
             public string ModVersion { get; set; }
 
             public List<string> ModRequires { get; set; }
+
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string name = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         public static void GetMods()
@@ -36,45 +55,34 @@ namespace MIRAGE_Launcher
                         string ModVersion = "";
                         List<string> ModRequires = new List<string>();
 
-                        bool ModNameTouched = false;
-                        bool ModVersionTouched = false;
-                        bool ModRequiresTouched = false;
-
-                        while (!ReadInfo.EndOfStream && (!ModNameTouched || !ModVersionTouched || !ModRequiresTouched))
+                        while (!ReadInfo.EndOfStream)
                         {
                             string Line = ReadInfo.ReadLine();
 
-                            if (Line.StartsWith("#") || Line.Length == 0)
+                            if (Line.StartsWith("id"))
                             {
-                                continue;
+                                ModName = Line.Split().Skip(1).FirstOrDefault();
                             }
-                            if (Line.StartsWith("id "))
+                            else if (Line.StartsWith("version"))
                             {
-                                ModName = Line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Last();
-                                ModNameTouched = true;
-                            }
-                            else if (Line.StartsWith("version "))
-                            {
-                                ModVersion = Line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Last();
-                                ModVersionTouched = true;
+                                ModVersion = Line.Split().Skip(1).FirstOrDefault();
                             }
                             else if (Line.StartsWith("requires"))
                             {
-                                foreach (string Temp in Line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                                foreach (string Temp in Line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Skip(1))
                                 {
-                                    if (Temp == "requires" || Temp == "BaseData")
+                                    if (Temp == "BaseData")
                                     {
                                         continue;
                                     }
                                     ModRequires.Add(Temp);
                                 }
-                                ModRequiresTouched = true;
                             }
                         }
-
                         if (!string.IsNullOrEmpty(ModName))
                         {
                             ModList.Add(new ModInfo() { ModEnabled = true, ModCheckBoxEnabled = true, ModName = ModName, ModVersion = ModVersion, ModRequires = ModRequires });
+                            GetEnabledMods();
                         }
                         else
                         {
@@ -87,30 +95,43 @@ namespace MIRAGE_Launcher
 
         public static string GetEnabledMods()
         {
-            List<string> Mods = new List<string>();
+            List<string> EnabledMods = new List<string>();
             List<string> Requires = new List<string>();
 
             foreach (ModInfo Mod in ModList)
             {
+                Mod.ModCheckBoxEnabled = true;
                 if (Mod.ModEnabled)
                 {
-                    Mods.Add(Mod.ModName);
+                    EnabledMods.Add(Mod.ModName);
                     Requires = Requires.Union(Mod.ModRequires).ToList();
                 }
             }
 
-            if (Mods.Any())
+            foreach (string Require in Requires)
             {
-                string MissingMods = string.Join(", ", Requires.Except(Mods));
+                foreach (ModInfo Mod in ModList)
+                { 
+                    if (Mod.ModName == Require)
+                    {
+                        //Mod.ModEnabled = true;
+                        Mod.ModCheckBoxEnabled = false;
+                    }
+                }
+            }
+
+            if (EnabledMods.Any())
+            {
+                string MissingMods = string.Join(", ", Requires.Except(EnabledMods));
 
                 if (string.IsNullOrEmpty(MissingMods))
                 {
-                    string EnabledMods = " -enable " + string.Join(" -enable ", Mods.Except(Requires));
-                    return EnabledMods;
+                    string Mods = " -enable " + string.Join(" -enable ", EnabledMods.Except(Requires));
+                    return Mods;
                 }
                 else
                 {
-                    MessageBox.Show("The following mods were not found or should be enabled: " + MissingMods, null, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Required mods ({MissingMods}) not found or disabled. All mods disabled.", null, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             return null;
