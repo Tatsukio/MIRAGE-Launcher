@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -19,7 +20,7 @@ namespace MIRAGE_Launcher
             public bool ModEnabled
             {
                 get { return modEnabled; }
-                set { modEnabled = value; OnPropertyChanged(); GetEnabledMods(); }
+                set { modEnabled = value; OnPropertyChanged(); }
             }
 
             private bool modCheckBoxEnabled;
@@ -82,7 +83,6 @@ namespace MIRAGE_Launcher
                         if (!string.IsNullOrEmpty(ModName))
                         {
                             ModList.Add(new ModInfo() { ModEnabled = true, ModCheckBoxEnabled = true, ModName = ModName, ModVersion = ModVersion, ModRequires = ModRequires });
-                            GetEnabledMods();
                         }
                         else
                         {
@@ -93,33 +93,44 @@ namespace MIRAGE_Launcher
             }
         }
 
-        public static string GetEnabledMods()
-        {
-            List<string> EnabledMods = new List<string>();
-            List<string> Requires = new List<string>();
+        static HashSet<string> EnabledMods = new HashSet<string>();
+        static List<string> Requires = new List<string>();
 
+        public static void GetEnabledMods()
+        {
+            EnabledMods.Clear();
+            Requires.Clear();
             foreach (ModInfo Mod in ModList)
             {
-                Mod.ModCheckBoxEnabled = true;
                 if (Mod.ModEnabled)
                 {
                     EnabledMods.Add(Mod.ModName);
                     Requires = Requires.Union(Mod.ModRequires).ToList();
                 }
             }
+            if (Requires.Except(EnabledMods).Any())
+            {
+                EnableRequires();
+            }
+        }
 
+        public static void EnableRequires()
+        {
             foreach (string Require in Requires)
             {
                 foreach (ModInfo Mod in ModList)
-                { 
+                {
                     if (Mod.ModName == Require)
                     {
-                        //Mod.ModEnabled = true;
-                        Mod.ModCheckBoxEnabled = false;
+                        Mod.ModEnabled = true;
                     }
                 }
             }
+            GetEnabledMods();
+        }
 
+        public static string PrepareCommandLine()
+        {
             if (EnabledMods.Any())
             {
                 string MissingMods = string.Join(", ", Requires.Except(EnabledMods));

@@ -531,6 +531,7 @@ namespace MIRAGE_Launcher
             {
                 return false;
             }
+            GetEnabledMods();
             ClearCache();
             StartPWKiller(true);
             Directory.SetCurrentDirectory(ParaworldBinDir);
@@ -541,7 +542,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", GetEnabledMods());
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", PrepareCommandLine());
             }
         }
 
@@ -549,7 +550,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/PWClient.exe", " -leveled" + GetEnabledMods());
+                Process.Start(ParaworldBinDir + "/PWClient.exe", " -leveled" + PrepareCommandLine());
             }
         }
 
@@ -557,7 +558,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -dedicated" + GetEnabledMods());
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -dedicated" + PrepareCommandLine());
             }
         }
 
