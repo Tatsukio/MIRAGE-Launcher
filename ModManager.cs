@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using static MIRAGE_Launcher.MainWindow;
 
@@ -14,34 +11,19 @@ namespace MIRAGE_Launcher
     class ModManager
     {
         public static ObservableCollection<ModInfo> ModList = new ObservableCollection<ModInfo>();
-        public class ModInfo : INotifyPropertyChanged
-        {
-            private bool modEnabled;
-            public bool ModEnabled
-            {
-                get { return modEnabled; }
-                set { modEnabled = value; OnPropertyChanged(); }
-            }
+        public static string EnabledMods = "";
 
-            private bool modCheckBoxEnabled;
-            public bool ModCheckBoxEnabled
-            {
-                get { return modCheckBoxEnabled; }
-                set { modCheckBoxEnabled = value; OnPropertyChanged(); }
-            }
+        public class ModInfo
+        {
+            public bool ModEnabled { get; set; }
+
+            public bool ModCheckBoxEnabled { get; set; }
 
             public string ModName { get; set; }
 
             public string ModVersion { get; set; }
 
             public List<string> ModRequires { get; set; }
-
-
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged([CallerMemberName] string name = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            }
         }
 
         public static void GetMods()
@@ -93,59 +75,34 @@ namespace MIRAGE_Launcher
             }
         }
 
-        static HashSet<string> EnabledMods = new HashSet<string>();
-        static List<string> Requires = new List<string>();
-
-        public static void GetEnabledMods()
+        public static bool GetEnabledMods()
         {
-            EnabledMods.Clear();
-            Requires.Clear();
+            List<string> Mods = new List<string>();
+            List<string> Requires = new List<string>();
+
             foreach (ModInfo Mod in ModList)
             {
                 if (Mod.ModEnabled)
                 {
-                    EnabledMods.Add(Mod.ModName);
+                    Mods.Add(Mod.ModName);
                     Requires = Requires.Union(Mod.ModRequires).ToList();
                 }
             }
-            if (Requires.Except(EnabledMods).Any())
+            if (Mods.Any())
             {
-                EnableRequires();
-            }
-        }
-
-        public static void EnableRequires()
-        {
-            foreach (string Require in Requires)
-            {
-                foreach (ModInfo Mod in ModList)
-                {
-                    if (Mod.ModName == Require)
-                    {
-                        Mod.ModEnabled = true;
-                    }
-                }
-            }
-            GetEnabledMods();
-        }
-
-        public static string PrepareCommandLine()
-        {
-            if (EnabledMods.Any())
-            {
-                string MissingMods = string.Join(", ", Requires.Except(EnabledMods));
+                string MissingMods = string.Join(", ", Requires.Except(Mods));
 
                 if (string.IsNullOrEmpty(MissingMods))
                 {
-                    string Mods = " -enable " + string.Join(" -enable ", EnabledMods.Except(Requires));
-                    return Mods;
+                    EnabledMods = " -enable " + string.Join(" -enable ", Mods.Except(Requires));
+                    return true;
                 }
                 else
                 {
-                    MessageBox.Show($"Required mods ({MissingMods}) not found or disabled. All mods disabled.", null, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Required mods ({MissingMods}) not found or disabled.", null, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            return null;
+            return false;
         }
     }
 }
