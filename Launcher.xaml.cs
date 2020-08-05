@@ -62,6 +62,7 @@ namespace MIRAGE_Launcher
         static string InitError = "";
         static string FirstLaunchError = "";
         static string WhatsNew = "";
+        public static string EnabledMods = "";
 
         public MainWindow()
         {
@@ -78,6 +79,7 @@ namespace MIRAGE_Launcher
                 {
                     OnFirstLaunch();
                 }
+
                 GetMods();
                 Task TGetMyPublicIp = new Task(GetMyPublicIp);
                 TGetMyPublicIp.Start();
@@ -147,13 +149,20 @@ namespace MIRAGE_Launcher
                 AskBackup                   = ErrorCode + "38\n" + Translate("/ask_backup");
 
                 IsFirstLaunch = Convert.ToBoolean(Localization.SelectSingleNode("/launcher_db/launcher_misc/is_first_launch").InnerText);
+
+                EnabledMods = Localization.SelectSingleNode("/launcher_db/launcher_misc/enabled_mods").InnerText;
             }
         }
 
         public string Translate(string Text)
         {
-            string TextPath = "/launcher_db/launcher_localization";
-            return Localization.DocumentElement.SelectSingleNode(TextPath + Text).InnerText;
+            return Localization.DocumentElement.SelectSingleNode("/launcher_db/launcher_localization" + Text).InnerText;
+        }
+
+        public void SaveToDB(string Name, string Value)
+        {
+            Localization.DocumentElement.SelectSingleNode("/launcher_db/launcher_misc" + Name).InnerText = Value;
+            Localization.Save(LauncherDBPath);
         }
 
         public void VersionCheck(string Version)
@@ -468,8 +477,7 @@ namespace MIRAGE_Launcher
 
             if (PWFontsCheck && BPCheck && SettingsCheck)
             {
-                Localization.DocumentElement.SelectSingleNode("/launcher_db/launcher_misc/is_first_launch").InnerText = false.ToString();
-                Localization.Save(LauncherDBPath);
+                SaveToDB("/is_first_launch", false.ToString());
             }
         }
 
@@ -531,10 +539,12 @@ namespace MIRAGE_Launcher
             {
                 return false;
             }
-            if (!GetEnabledMods())
+            EnabledMods = GetEnabledMods();
+            if (EnabledMods == null)
             {
                 return false;
             }
+            SaveToDB("/enabled_mods", string.Join(",", Mods));
             ClearCache();
             StartPWKiller(true);
             Directory.SetCurrentDirectory(ParaworldBinDir);
@@ -545,7 +555,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", EnabledMods);
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", GetCommandLine(EnabledMods));
             }
         }
 
@@ -553,7 +563,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/PWClient.exe", " -leveled" + EnabledMods);
+                Process.Start(ParaworldBinDir + "/PWClient.exe", " -leveled" + GetCommandLine(EnabledMods));
             }
         }
 
@@ -561,7 +571,7 @@ namespace MIRAGE_Launcher
         {
             if (ReadyToStart())
             {
-                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -dedicated" + EnabledMods);
+                Process.Start(ParaworldBinDir + "/Paraworld.exe", " -dedicated" + GetCommandLine(EnabledMods));
             }
         }
 

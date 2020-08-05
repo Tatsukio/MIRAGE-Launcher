@@ -39,6 +39,7 @@
 	</launcher_localization>
 	<launcher_misc>
 		<is_first_launch>true</is_first_launch>
+		<enabled_mods>BoosterPack1,MIRAGE</enabled_mods>
 	</launcher_misc>
 	<pwkiller_localization>
 		<pwkiller_label>If ParaWorld crashes or does not terminate, press this button!</pwkiller_label>

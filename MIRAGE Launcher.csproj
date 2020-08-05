@@ -125,9 +125,6 @@
     <Resource Include="Res\update_icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Res\checkbox_checked_locked.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Res\checkbox_checked.png" />
     <Resource Include="Res\checkbox_empty.png" />
     <Resource Include="Res\checkbox_pressed.png" />

@@ -11,13 +11,10 @@ namespace MIRAGE_Launcher
     class ModManager
     {
         public static ObservableCollection<ModInfo> ModList = new ObservableCollection<ModInfo>();
-        public static string EnabledMods = "";
 
         public class ModInfo
         {
             public bool ModEnabled { get; set; }
-
-            public bool ModCheckBoxEnabled { get; set; }
 
             public string ModName { get; set; }
 
@@ -28,12 +25,14 @@ namespace MIRAGE_Launcher
 
         public static void GetMods()
         {
+            ModList.Clear();
             if (Directory.Exists(InfoDir))
             {
                 foreach (string InfoName in Directory.EnumerateFiles(InfoDir, "*.info").Select(Path.GetFileName).Where(s => s != "BaseLocale.info" && s != "LevelEd.info" && !s.Contains("Locale_")))
                 {
                     using (StreamReader ReadInfo = new StreamReader(InfoDir + InfoName))
                     {
+                        bool ModEnabled = false;
                         string ModName = "";
                         string ModVersion = "";
                         List<string> ModRequires = new List<string>();
@@ -54,7 +53,7 @@ namespace MIRAGE_Launcher
                             {
                                 foreach (string Temp in Line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Skip(1))
                                 {
-                                    if (Temp == "BaseData")
+                                    if(Temp == "BaseData")
                                     {
                                         continue;
                                     }
@@ -64,7 +63,11 @@ namespace MIRAGE_Launcher
                         }
                         if (!string.IsNullOrEmpty(ModName))
                         {
-                            ModList.Add(new ModInfo() { ModEnabled = true, ModCheckBoxEnabled = true, ModName = ModName, ModVersion = ModVersion, ModRequires = ModRequires });
+                            if (Array.Exists(EnabledMods.Split(','), s => s == ModName))
+                            {
+                                ModEnabled = true;
+                            }
+                            ModList.Add(new ModInfo() { ModEnabled = ModEnabled, ModName = ModName, ModVersion = ModVersion, ModRequires = ModRequires });
                         }
                         else
                         {
@@ -75,9 +78,11 @@ namespace MIRAGE_Launcher
             }
         }
 
-        public static bool GetEnabledMods()
+        public static List<string> Mods = new List<string>();
+
+        public static string GetEnabledMods()
         {
-            List<string> Mods = new List<string>();
+            Mods.Clear();
             List<string> Requires = new List<string>();
 
             foreach (ModInfo Mod in ModList)
@@ -94,15 +99,22 @@ namespace MIRAGE_Launcher
 
                 if (string.IsNullOrEmpty(MissingMods))
                 {
-                    EnabledMods = " -enable " + string.Join(" -enable ", Mods.Except(Requires));
-                    return true;
+                    string EnabledMods = string.Join(",", Mods.Except(Requires));
+                    return EnabledMods;
                 }
                 else
                 {
                     MessageBox.Show($"Required mods ({MissingMods}) not found or disabled.", null, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
                 }
             }
-            return false;
+            return string.Empty;
+        }
+
+        public static string GetCommandLine(string EnabledMods)
+        {
+            string CommandLine = " -enable " + string.Join(" -enable ", EnabledMods.Split(','));
+            return CommandLine;
         }
     }
 }

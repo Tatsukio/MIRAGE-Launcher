@@ -129,9 +129,6 @@
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="checkboxImage" Property="Source" Value="/Res/checkbox_pressed.png"/>
                         </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="checkboxImage" Property="Source" Value="/Res/checkbox_checked_locked.png"/>
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

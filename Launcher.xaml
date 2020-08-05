@@ -80,7 +80,7 @@
                         <GridViewColumn>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Margin="0" VerticalAlignment="Center" IsChecked="{Binding ModEnabled}" Style = "{StaticResource CheckBoxStyle}" IsEnabled = "{Binding ModCheckBoxEnabled}"/>
+                                    <CheckBox Margin="0" VerticalAlignment="Center" IsChecked="{Binding ModEnabled}" Style = "{StaticResource CheckBoxStyle}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
