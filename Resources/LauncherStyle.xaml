@@ -10,7 +10,7 @@
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Background">
             <Setter.Value>
-                <ImageBrush ImageSource="/Res/button_normal.png"/>
+                <ImageBrush ImageSource="/Resources/button_normal.png"/>
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
@@ -26,14 +26,14 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background">
                     <Setter.Value>
-                        <ImageBrush ImageSource="/Res/button_hover.png"/>
+                        <ImageBrush ImageSource="/Resources/button_hover.png"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Background">
                     <Setter.Value>
-                        <ImageBrush ImageSource="/Res/button_down.png"/>
+                        <ImageBrush ImageSource="/Resources/button_down.png"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -63,54 +63,18 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background">
                     <Setter.Value>
-                        <ImageBrush ImageSource="/Res/social_button_hover.png"/>
+                        <ImageBrush ImageSource="/Resources/social_button_hover.png"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Background">
                     <Setter.Value>
-                        <ImageBrush ImageSource="/Res/social_button_down.png"/>
+                        <ImageBrush ImageSource="/Resources/social_button_down.png"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>
 
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="ModdbIconStyle" TargetType="Image">
-        <Setter Property="Margin" Value="660,100,0,0"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding ElementName=OpenModdb, Path=IsPressed}" Value="True">
-                <Setter Property="Margin" Value="660,101,0,0"/>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="DiscordIconStyle" TargetType="Image">
-        <Setter Property="Margin" Value="660,144,0,0"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding ElementName=OpenDiscord, Path=IsPressed}" Value="True">
-                <Setter Property="Margin" Value="660,145,0,0"/>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="PatreonIconStyle" TargetType="Image">
-        <Setter Property="Margin" Value="660,188,0,0"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding ElementName=OpenPatreon, Path=IsPressed}" Value="True">
-                <Setter Property="Margin" Value="660,189,0,0"/>
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="UpdateIconStyle" TargetType="Image">
-        <Setter Property="Margin" Value="661,56,0,0"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding ElementName=OpenUpdatePage, Path=IsPressed}" Value="True">
-                <Setter Property="Margin" Value="661,57,0,0"/>
-            </DataTrigger>
         </Style.Triggers>
     </Style>
 
@@ -119,15 +83,15 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
                     <StackPanel Orientation="Horizontal">
-                        <Image x:Name="checkboxImage" Source="/Res/checkbox_empty.png" Width="21"/>
+                        <Image x:Name="checkboxImage" Source="/Resources/checkbox_empty.png" Width="21"/>
                         <ContentPresenter/>
                     </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="checkboxImage" Property="Source" Value="/Res/checkbox_checked.png"/>
+                            <Setter TargetName="checkboxImage" Property="Source" Value="/Resources/checkbox_checked.png"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="checkboxImage" Property="Source" Value="/Res/checkbox_pressed.png"/>
+                            <Setter TargetName="checkboxImage" Property="Source" Value="/Resources/checkbox_pressed.png"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

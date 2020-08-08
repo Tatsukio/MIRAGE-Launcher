@@ -14,6 +14,21 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,7 +52,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Res\mirage.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\mirage.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
@@ -68,20 +83,23 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Launcher.xaml">
+    <Page Include="Views\Launcher.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Res\LauncherStyle.xaml">
+    <Page Include="Resources\LauncherStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Launcher.xaml.cs">
+    <Compile Include="Converters\CParametrizedBooleanToVisibilityConverter.cs" />
+    <Compile Include="ViewModels\CCommand.cs" />
+    <Compile Include="ViewModels\CLauncherViewModel.cs" />
+    <Compile Include="ViewModels\CViewModelBase.cs" />
+    <Compile Include="Views\Launcher.xaml.cs">
       <DependentUpon>Launcher.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ModManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -104,31 +122,31 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Resource Include="Res\standard.ani" />
+    <Resource Include="Resources\standard.ani" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Res\button_down.png" />
-    <Resource Include="Res\button_hover.png" />
-    <Resource Include="Res\button_normal.png" />
-    <Resource Include="Res\discord_icon.png" />
-    <Resource Include="Res\menu_bg.png" />
-    <Resource Include="Res\mirage.ico" />
-    <Resource Include="Res\moddb_icon.png" />
-    <Resource Include="Res\patreon_icon.png" />
-    <Resource Include="Res\social_buttons_bg.png" />
-    <Resource Include="Res\social_button_down.png" />
-    <Resource Include="Res\social_button_hover.png" />
-    <Resource Include="Res\update_bg.png" />
-    <Resource Include="Res\update_icon.png" />
+    <Resource Include="Resources\button_down.png" />
+    <Resource Include="Resources\button_hover.png" />
+    <Resource Include="Resources\button_normal.png" />
+    <Resource Include="Resources\discord_icon.png" />
+    <Resource Include="Resources\menu_bg.png" />
+    <Resource Include="Resources\mirage.ico" />
+    <Resource Include="Resources\moddb_icon.png" />
+    <Resource Include="Resources\patreon_icon.png" />
+    <Resource Include="Resources\social_buttons_bg.png" />
+    <Resource Include="Resources\social_button_down.png" />
+    <Resource Include="Resources\social_button_hover.png" />
+    <Resource Include="Resources\update_bg.png" />
+    <Resource Include="Resources\update_icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Res\checkbox_checked.png" />
-    <Resource Include="Res\checkbox_empty.png" />
-    <Resource Include="Res\checkbox_pressed.png" />
-    <Resource Include="Res\modlist_bg.png" />
+    <Resource Include="Resources\checkbox_checked.png" />
+    <Resource Include="Resources\checkbox_empty.png" />
+    <Resource Include="Resources\checkbox_pressed.png" />
+    <Resource Include="Resources\modlist_bg.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Launcher\Backgrounds\background_1.jpg">
@@ -389,6 +407,21 @@
     <None Include="Launcher\launcher_db.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
