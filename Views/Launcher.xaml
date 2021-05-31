@@ -15,9 +15,8 @@
         <converters:CParametrizedBooleanToVisibilityConverter x:Key="VisibilityConverter" />
     </Window.Resources>
     <Grid>
-        <Border BorderBrush="#CC343434" BorderThickness="1">
-            <Image x:Name="LauncherBG" Source="{Binding LauncherBackground}" HorizontalAlignment="Left" Height="526" VerticalAlignment="Top" Width="700" />
-        </Border>
+        <Image x:Name="LauncherBG" Source="{Binding LauncherBackground}" HorizontalAlignment="Left" Height="526" VerticalAlignment="Top" Width="700"/>
+        <Border BorderBrush="#CC000000" BorderThickness="1" HorizontalAlignment="Left" Height="526" VerticalAlignment="Top" Width="700"/>
         <Image x:Name="MenuBG" HorizontalAlignment="Left" Height="485" Margin="20,25,0,0" VerticalAlignment="Top" Width="258" Source="/Resources/menu_bg.png"/>
         <TextBlock x:Name="MenuTitle" Text="{Binding MenuTitleText}" HorizontalAlignment="Left" Margin="39,27,0,0" VerticalAlignment="Top" FontFamily="Trebuchet MS" FontWeight="Bold" FontSize="16" Foreground="#FF331100" >
             <TextBlock.Effect>
@@ -31,7 +30,11 @@
             <Button x:Name="StartSdk" Content="{Binding StartSDKText}" Margin="50,110,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding StartSDKCmd}"/>
             <Button x:Name="StartServer" Content="{Binding StartServerText}" Margin="50,145,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding StartServerCmd}"/>
             <Button x:Name="OpenTavern" Content="{Binding OpenTavernText}" Margin="50,180,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding OpenTavernCmd}"/>
-            <Button x:Name="SwitchMusicButton" Content="{Binding ToggleMusicText}" Margin="50,215,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding ToggleMusicCmd}" />
+            <Button x:Name="SwitchMusicButton" Content="{Binding ToggleMusicText}" Margin="50,215,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding ToggleMusicCmd}" >
+               <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding PlayNextTrackCmd}"/>
+               </Button.InputBindings>
+            </Button>
             <Button x:Name="ClearCacheButton" Content="{Binding ClearCacheText}" Margin="50,270,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding ClearCacheCmd}"/>
             <Button x:Name="OpenSettings" Content="{Binding OpenSettingsFolderText}" Margin="50,305,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding OpenSettingsFolderCmd}"/>
             <Button x:Name="KillProcesses" Content = "{Binding StartPWKillerText}" Margin="50,340,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding StartPWKillerCmd}"/>
@@ -41,14 +44,14 @@
         <Button x:Name="Uninstall" Content = "{Binding UninstallText}" Margin="50,410,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding UninstallCmd}" />
         <Button x:Name="Exit" Content = "{Binding ExitText}" Margin="50,445,0,0" Style = "{StaticResource MenuButtonStyle}" Command="{Binding ExitCmd}" />
 
-        <Image x:Name="SocialBG" Visibility="{Binding ShowUpdateWindow, Converter={StaticResource VisibilityConverter}, ConverterParameter=false}" HorizontalAlignment="Right" Height="147" Margin="0,88,0,0" VerticalAlignment="Top" Width="52" Source="/Resources/social_buttons_bg.png"/>
+        <Image x:Name="SocialBG" Visibility="{Binding ShowUpdateWindow, Converter={StaticResource VisibilityConverter}, ConverterParameter=false}" HorizontalAlignment="Right" Height="147" Margin="0,88,0,0" VerticalAlignment="Top" Width="53" Source="/Resources/social_buttons_bg.png"/>
         <Button x:Name="OpenModdb" Margin="658,98,0,0" Style = "{StaticResource SocialButtonStyle}" Command="{Binding OpenModdbCmd}" Panel.ZIndex="1">
-            <Image x:Name="OpenModdb1" Source="/Resources/moddb_icon.png" Stretch="None"/>
+            <Image Source="/Resources/moddb_icon.png" Stretch="None"/>
         </Button>
         <Button x:Name="OpenDiscord" Margin="658,142,0,0" Style = "{StaticResource SocialButtonStyle}" Command="{Binding OpenDiscordCmd}" Panel.ZIndex="1">
             <Image Source="/Resources/discord_icon.png" Stretch="None"/>
         </Button>
-        <Button x:Name="OpenPatreon" Margin="658,186,0,0" Style = "{StaticResource SocialButtonStyle}" Command="{Binding OpenPatreonCmd}" Panel.ZIndex="1">
+        <Button x:Name="OpenPatreon" Margin="658,186,0,0" Style = "{StaticResource SocialButtonStyle}" Panel.ZIndex="1">
             <Image Source="/Resources/patreon_icon.png" Stretch="None"/>
         </Button>
 
@@ -121,7 +124,7 @@
                 </TextBlock.Effect>
             </TextBlock>
             <TextBlock x:Name="UpdateLog" Text="{Binding UpdateLogText}" HorizontalAlignment="Left" Margin="329,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="145" Width="306" FontFamily="Trebuchet MS" FontWeight="Bold" FontSize="15" Foreground="#FF998866"/>
-            
+
             <Button x:Name="OpenUpdatePage" Margin="658,54,0,0" Style = "{StaticResource SocialButtonStyle}" Command="{Binding OpenUpdatePageCmd}" >
                 <Image x:Name="UpdateIcon" Source="/Resources/update_icon.png" Stretch="None"/>
                 <Button.Triggers>

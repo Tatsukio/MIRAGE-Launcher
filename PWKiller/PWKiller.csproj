@@ -69,13 +69,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Compile Include="PWKiller.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PWKiller.Designer.cs">
       <DependentUpon>PWKiller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="PWKiller.resx">
       <DependentUpon>PWKiller.cs</DependentUpon>

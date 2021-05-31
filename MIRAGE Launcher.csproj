@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\CParametrizedBooleanToVisibilityConverter.cs" />
+    <Compile Include="Models\CLauncherModel.cs" />
     <Compile Include="ViewModels\CCommand.cs" />
     <Compile Include="ViewModels\CLauncherViewModel.cs" />
     <Compile Include="ViewModels\CViewModelBase.cs" />
@@ -404,12 +405,9 @@
     <None Include="Launcher\Backgrounds\background_9.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Launcher\launcher_db.xml">
+    <None Include="Launcher\LauncherDB.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

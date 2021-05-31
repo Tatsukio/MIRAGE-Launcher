@@ -13,20 +13,35 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using MIRAGE_Launcher.Models;
 using MIRAGE_Launcher.ViewModels;
 
 namespace MIRAGE_Launcher.ViewModel
 {
     public class CLauncherViewModel : CViewModelBase
     {
+        static bool _firstLaunch = false;
+        static string _enabledMods = "";
+
+        static readonly MediaPlayer _mediaPlayer = new MediaPlayer();
+        static readonly XmlDocument _launcherDB = new XmlDocument();
+
+        static string _launcherExeDir = AppDomain.CurrentDomain.BaseDirectory;
+        static string _paraworldDir = _launcherExeDir + "../../";
+        static string _paraworldBinDir = _paraworldDir + "/bin";
+        static string _toolsDir = _paraworldDir + "/Tools";
+        static string _launcherDBPath = _toolsDir + "/Launcher/LauncherDB.xml";
+        static string _infoDir = _paraworldDir + "/Data/Info/";
+        static string[] _pwProcesses = { "Paraworld", "PWClient", "PWServer" };
+
+        static readonly string _cacheDir = Path.GetFullPath(Path.GetTempPath() + "/SpieleEntwicklungsKombinat/Paraworld");
+        static readonly string _appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        static readonly string _settingsDir = Path.GetFullPath(_appDataDir + "/SpieleEntwicklungsKombinat/Paraworld");
+        static readonly string _settingsPath = Path.GetFullPath(_settingsDir + "/settings.cfg");
+        static readonly string _settingsBackupPath = Path.GetFullPath(_settingsDir + "/Settings_SSSS_backup.cfg");
+
         public CLauncherViewModel()
         {
-            if (Process.GetProcessesByName("MIRAGE Launcher").Count() > 1)
-            {
-                MessageBox.Show(_launcherIsAlreadyRunning, _warning, MessageBoxButton.OK, MessageBoxImage.Warning);
-                Application.Current.Shutdown();
-            }
-
             #region Commands
 
             StartParaworldCmd = new CCommand(OnStartParaworldCmd, StartParaworldCmdEnabled);
@@ -34,6 +49,7 @@ namespace MIRAGE_Launcher.ViewModel
             StartServerCmd = new CCommand(OnStartServerCmd, StartServerCmdEnabled);
             OpenTavernCmd = new CCommand(OnOpenTavernCmd, OpenTavernCmdEnabled);
             ToggleMusicCmd = new CCommand(OnToggleMusicCmd, ToggleMusicCmdEnabled);
+            PlayNextTrackCmd = new CCommand(OnPlayNextTrackCmd, PlayNextTrackCmdEnabled);
             ClearCacheCmd = new CCommand(OnClearCacheCmd, ClearCacheCmdEnabled);
             OpenSettingsFolderCmd = new CCommand(OnOpenSettingsFolderCmd, OpenSettingsFolderCmdEnabled);
             StartPWKillerCmd = new CCommand(OnStartPWKillerCmd, StartPWKillerCmdEnabled);
@@ -54,42 +70,65 @@ namespace MIRAGE_Launcher.ViewModel
 
             #endregion
 
-            LoadUI();
-            LoadDB();
-            ToggleMusic();
-            if (!string.IsNullOrEmpty(_initError))
-            {
-                MessageBox.Show(_initError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            if (_isFirstLaunch)
-            {
-                OnFirstLaunch();
-            }
             Task taskGetMyPublicIp = new Task(GetMyPublicIp);
+
+            //GameRanger support
+            if (Process.GetCurrentProcess().ProcessName == _pwProcesses[0])
+            {
+                _paraworldBinDir = AppDomain.CurrentDomain.BaseDirectory;
+                _paraworldDir = _paraworldBinDir + "../";
+                _toolsDir = _paraworldDir + "/Tools";
+                _launcherDBPath = _toolsDir + "/Launcher/LauncherDB.xml";
+                _infoDir = _paraworldDir + "/Data/Info/";
+
+                _pwProcesses[0] = "Paraworld2";
+
+                Process[] AllLauncher = Process.GetProcessesByName("MIRAGE Launcher");
+                foreach (Process Launcher in AllLauncher)
+                {
+                    Launcher.Kill();
+                }
+
+                /*
+                var process = Process.Start($"{_toolsDir}/Launcher/MIRAGE Launcher.exe");
+                process.WaitForExit();
+
+                _launcherDBPath = _toolsDir + "/Launcher/LauncherDB.xml";
+                _infoDir = _paraworldDir + "/Data/Info/";
+
+                _pwProcesses[0] = "Paraworld2";
+                taskGetMyPublicIp.Start();
+                LoadDB();
+                GetMods();
+
+                if (ReadyToStart())
+                {
+                    Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}/Paraworld2.exe", GetEnabledMods());
+                }
+                Application.Current.Shutdown();
+                return;
+                */
+            }
+
+            if (Process.GetProcessesByName("MIRAGE Launcher").Count() > 1)
+            {
+                MessageBox.Show(_launcherIsAlreadyRunning, _warning, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Application.Current.Shutdown();
+                return;
+            }
+
+            //Discord RichPresence support
+            if (File.Exists(_paraworldBinDir + "/PWClient2.exe"))
+            {
+                _pwProcesses[1] = "PWClient2";
+            }
+
             taskGetMyPublicIp.Start();
+            LoadDB();
+            LoadUI();
             GetMods();
+            ToggleMusic();
         }
-
-        static bool _isFirstLaunch = false;
-        static string _initError = "";
-        static string _firstLaunchError = "";
-        static string _enabledMods = "";
-
-        static readonly MediaPlayer _mediaPlayer = new MediaPlayer();
-        static readonly XmlDocument _localization = new XmlDocument();
-
-        static readonly string _launcherExeDir = AppDomain.CurrentDomain.BaseDirectory;
-        static readonly string _paraworldDir = _launcherExeDir + "../../";
-        static readonly string _paraworldBinDir = _paraworldDir + "/bin";
-        static readonly string _toolsDir = _paraworldDir + "/Tools";
-        static readonly string _launcherDBPath = _toolsDir + "/Launcher/launcher_db.xml";
-        static readonly string _infoDir = _paraworldDir + "/Data/Info/";
-
-        static readonly string _cacheDir = Path.GetFullPath(Path.GetTempPath() + "/SpieleEntwicklungsKombinat/Paraworld");
-        static readonly string _appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        static readonly string _settingsDir = Path.GetFullPath(_appDataDir + "/SpieleEntwicklungsKombinat/Paraworld");
-        static readonly string _settingsPath = Path.GetFullPath(_settingsDir + "/settings.cfg");
-        static readonly string _settingsBackupPath = Path.GetFullPath(_settingsDir + "/Settings_SSSS_backup.cfg");
 
         private BitmapImage _launcherBackground;
         public BitmapImage LauncherBackground
@@ -242,7 +281,6 @@ namespace MIRAGE_Launcher.ViewModel
         #endregion
 
         static string _warning = "Warning";
-        static string _fileNotFound = "File not found";
         static string _backupMissing = "Backup file not found";
         static string _overwriteBackup = "Backup file already exists. Overwrite backup file?";
         static string _pwIsAlreadyRunning = "ParaWorld is already running. Start PWKiller?";
@@ -256,7 +294,7 @@ namespace MIRAGE_Launcher.ViewModel
         static string _bpMissing = "BoosterPack is not installed, please install it first. You can download it from Para-Welt.com or ParaWorld ModDB.";
         static string _settingsMissing = "Settings.cfg not found. If you have never run ParaWorld on this system before, you must run it first to create the necessary files.";
         static string _switchSSSError = "Failed to switch server side scripts.";
-        static string _askBackup = "Do you want to try to use the backup file?";
+        static string _askSettingsBackup = "Do you want to try to use the backup file?";
 
         #endregion
 
@@ -268,7 +306,7 @@ namespace MIRAGE_Launcher.ViewModel
         {
             if (ReadyToStart())
             {
-                Process.Start(_paraworldBinDir + "/Paraworld.exe", GetCommandLine(_enabledMods));
+                Process.Start($"{_paraworldBinDir}/{_pwProcesses[0]}.exe", GetEnabledMods());
             }
         }
         public ICommand StartSDKCmd { get; }
@@ -277,7 +315,7 @@ namespace MIRAGE_Launcher.ViewModel
         {
             if (ReadyToStart())
             {
-                Process.Start(_paraworldBinDir + "/PWClient.exe", " -leveled" + GetCommandLine(_enabledMods));
+                Process.Start($"{_paraworldBinDir}/{_pwProcesses[1]}.exe", " -leveled" + GetEnabledMods());
             }
         }
         public ICommand StartServerCmd { get; }
@@ -286,7 +324,7 @@ namespace MIRAGE_Launcher.ViewModel
         {
             if (ReadyToStart())
             {
-                Process.Start(_paraworldBinDir + "/Paraworld.exe", " -dedicated" + GetCommandLine(_enabledMods));
+                Process.Start($"{_paraworldBinDir}/{_pwProcesses[0]}.exe", " -dedicated" + GetEnabledMods());
             }
         }
         public ICommand OpenTavernCmd { get; }
@@ -324,6 +362,15 @@ namespace MIRAGE_Launcher.ViewModel
             }
         }
 
+        public ICommand PlayNextTrackCmd { get; }
+        private bool PlayNextTrackCmdEnabled(object p) => true;
+        private void OnPlayNextTrackCmd(object p)
+        {
+            ToggleMusic();
+            LoadUI();
+            ToggleMusic();
+        }
+
         public ICommand ClearCacheCmd { get; }
         private bool ClearCacheCmdEnabled(object p) => true;
         private void OnClearCacheCmd(object p)
@@ -344,7 +391,7 @@ namespace MIRAGE_Launcher.ViewModel
         {
             if (!Directory.Exists(_settingsDir))
             {
-                MessageBox.Show("Folder\n" + _settingsDir + "\nnot found", _fileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Folder\n" + _settingsDir + "\nnot found", null, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             Process.Start("explorer", _settingsDir);
@@ -423,7 +470,7 @@ namespace MIRAGE_Launcher.ViewModel
             FileInfo settingsBackup = new FileInfo(_settingsBackupPath);
             if (!settingsBackup.Exists)
             {
-                MessageBox.Show(_backupMissing, _fileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(_backupMissing, null, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if (MessageBox.Show(_resetSettings, _warning, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -459,7 +506,7 @@ namespace MIRAGE_Launcher.ViewModel
             }
             else
             {
-                MessageBox.Show(_settingsMissing, _fileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(_settingsMissing, null, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -514,6 +561,69 @@ namespace MIRAGE_Launcher.ViewModel
 
         #endregion
 
+        public bool ReadyToStart()
+        {
+            if (_firstLaunch)
+            {
+                string firstLaunchError = OnFirstLaunch();
+                if (string.IsNullOrEmpty(firstLaunchError))
+                {
+                    SaveEnabledModsToDB("IsFirstLaunch", false.ToString());
+                }
+                else
+                {
+                    MessageBox.Show(firstLaunchError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+
+            foreach (string pwProcess in _pwProcesses)
+            {
+                if (!FileFound($"{_paraworldBinDir}/{pwProcess}.exe"))
+                {
+                    return false;
+                }
+            }
+
+
+            foreach (string pwProcess in _pwProcesses)
+            {
+                if (Process.GetProcessesByName(pwProcess).Any())
+                {
+                    if (MessageBox.Show(_pwIsAlreadyRunning, null, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        StartPWKiller(false);
+                    }
+                    return false;
+                }
+            }
+
+            if (!EnableSSS(true))
+            {
+                return false;
+            }
+
+            _enabledMods = GetEnabledMods();
+            if (_enabledMods == null)
+            {
+                return false;
+            }
+            SaveEnabledModsToDB("EnabledMods", string.Join(",", ModList));
+
+            ClearCache();
+
+            if (MusicPlaying)
+            {
+                ToggleMusic();
+            }
+
+            StartPWKiller(true);
+
+            Directory.SetCurrentDirectory(_paraworldBinDir);
+
+            return true;
+        }
+
         private bool ClearCache()
         {
             string[] cacheExts = { "bin", "ubc", "swd" };
@@ -545,7 +655,7 @@ namespace MIRAGE_Launcher.ViewModel
             {
                 return true;
             }
-            MessageBox.Show(Path.GetFullPath(filename) + " not found.", _fileNotFound, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(Path.GetFullPath(filename) + " not found.", null, MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
 
@@ -554,52 +664,14 @@ namespace MIRAGE_Launcher.ViewModel
             if (FileFound(_toolsDir + "/PWKiller.exe"))
             {
                 ProcessStartInfo pwKiller = new ProcessStartInfo(_toolsDir + "/PWKiller.exe");
+                Process.Start(pwKiller);
                 if (minimized)
                 {
-                    Process.Start(_toolsDir + "/PWKiller.exe", "-SSSOffAfterPWExit");
+                    pwKiller.Arguments = "-SSSOffAfterPWExit";
                     pwKiller.WindowStyle = ProcessWindowStyle.Minimized;
+                    Process.Start(pwKiller);
                 }
-                Process.Start(pwKiller);
             }
-        }
-
-        private bool ReadyToStart()
-        {
-            if (!string.IsNullOrEmpty(_firstLaunchError))
-            {
-                MessageBox.Show(_firstLaunchError.TrimEnd('\n'), null, MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-            if (!FileFound(_paraworldBinDir + "/Paraworld.exe") || !FileFound(_paraworldBinDir + "/PWClient.exe"))
-            {
-                return false;
-            }
-            if (Process.GetProcessesByName("Paraworld").Any() || Process.GetProcessesByName("PWClient").Any() || Process.GetProcessesByName("PWClient2").Any() || Process.GetProcessesByName("PWServer").Any())
-            {
-                if (MessageBox.Show(_pwIsAlreadyRunning, null, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    StartPWKiller(false);
-                }
-                return false;
-            }
-            if (!EnableSSS(true))
-            {
-                return false;
-            }
-            _enabledMods = GetEnabledMods();
-            if (_enabledMods == null)
-            {
-                return false;
-            }
-            SaveToDB("/enabled_mods", string.Join(",", ModList));
-            ClearCache();
-            if (MusicPlaying)
-            {
-                ToggleMusic();
-            }
-            StartPWKiller(true);
-            Directory.SetCurrentDirectory(_paraworldBinDir);
-            return true;
         }
 
         private bool EnableSSS(bool enable)
@@ -622,7 +694,7 @@ namespace MIRAGE_Launcher.ViewModel
                 modConf.WaitForExit();
                 if (modConf.ExitCode != 0)
                 {
-                    if (MessageBox.Show(_switchSSSError + "\n" + _askBackup, null, MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(_switchSSSError + "\n" + _askSettingsBackup, null, MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
                     {
                         RestoreSettings();
                     }
@@ -642,7 +714,7 @@ namespace MIRAGE_Launcher.ViewModel
 
             if (!Directory.Exists(backgroundDir) || !File.Exists(backgroundDir + "background_" + backgroundIndex + ".jpg"))
             {
-                _initError += "Folder " + backgroundDir + " not found or empty.\n\n";
+                MessageBox.Show("Folder " + backgroundDir + " not found or empty.", null, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
@@ -653,7 +725,7 @@ namespace MIRAGE_Launcher.ViewModel
 
             if (!File.Exists(musicDir))
             {
-                _initError += musicDir + " not found.\n\n";
+                MessageBox.Show(musicDir + " not found.", null, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
@@ -667,54 +739,57 @@ namespace MIRAGE_Launcher.ViewModel
         {
             if (FileFound(_launcherDBPath))
             {
-                _localization.Load(_launcherDBPath);
-                string version = Translate("/mod_version");
-                Task taskVersionCheck = new Task(() => VersionCheck(version));
+                _launcherDB.Load(_launcherDBPath);
+                string ModVersion = Translate("ModVersion");
+                string LatestVersionURL = _launcherDB.SelectSingleNode("/LauncherDB/LauncherMisc/VersionURL").InnerText;
+                Task taskVersionCheck = new Task(() => VersionCheck(ModVersion, LatestVersionURL));
                 taskVersionCheck.Start();
 
-                UpdateTitleText = Translate("/update_label");
-                MenuTitleText = Translate("/main_label");
-                StartModText = Translate("/start_mod");
-                StartSDKText = Translate("/start_sdk");
-                StartServerText = Translate("/start_server");
-                OpenTavernText = Translate("/open_tavern");
-                _turnMusicOnText = Translate("/turn_music_on");
-                _turnMusicOffText = Translate("/turn_music_off");
-                ClearCacheText = Translate("/clear_cache");
-                OpenSettingsFolderText = Translate("/open_settings");
-                StartPWKillerText = Translate("/kill_processes");
-                _openPWToolText = Translate("/open_pwtool");
-                _closePWToolText = Translate("/close_pwtool");
-                SSSOnText = Translate("/sss_on");
-                SSSOffText = Translate("/sss_off");
-                RestoreSettingsText = Translate("/restore_settings");
-                CreateSettingsBackupText = Translate("/create_settings_backup");
-                UninstallText = Translate("/uninstall");
-                ExitText = Translate("/exit");
+                UpdateTitleText = Translate("UpdateTitleText");
+                MenuTitleText = Translate("MenuTitleText");
+                StartModText = Translate("StartModText");
+                StartSDKText = Translate("StartSDKText");
+                StartServerText = Translate("StartServerText");
+                OpenTavernText = Translate("OpenTavernText");
+                _turnMusicOnText = Translate("TurnMusicOnText");
+                _turnMusicOffText = Translate("TurnMusicOffText");
+                ClearCacheText = Translate("ClearCacheText");
+                OpenSettingsFolderText = Translate("OpenSettingsFolderText");
+                StartPWKillerText = Translate("StartPWKillerText");
+                _openPWToolText = Translate("OpenPWToolText");
+                _closePWToolText = Translate("ClosePWToolText");
+                SSSOnText = Translate("SSSOnText");
+                SSSOffText = Translate("SSSOffText");
+                RestoreSettingsText = Translate("RestoreSettingsText");
+                CreateSettingsBackupText = Translate("CreateSettingsBackupText");
+                UninstallText = Translate("UninstallText");
+                ExitText = Translate("ExitText");
                 ToggleMusicText = _turnMusicOnText;
                 TogglePWToolText = _openPWToolText;
 
-                _warning = Translate("/warning");
+                _warning = Translate("Warning");
 
                 string errorCode = "Code#"; //Line num in mirage_db.xml
 
-                _pwIsAlreadyRunning = errorCode + "26\n" + Translate("/pw_is_already_running");
-                _launcherIsAlreadyRunning = errorCode + "27\n" + Translate("/launcher_is_already_running");
-                _backupMissing = errorCode + "28\n" + Translate("/backup_missing");
-                _resetSettings = errorCode + "29\n" + Translate("/reset_settings");
-                _resetSettingsSuccess = errorCode + "30\n" + Translate("/reset_settings_success");
-                _overwriteBackup = errorCode + "31\n" + Translate("/overwrite_backup");
-                _backupCreated = errorCode + "32\n" + Translate("/backup_created");
-                _noCacheFound = errorCode + "33\n" + Translate("/no_cache_found");
-                _cacheDeleted = errorCode + "34\n" + Translate("/cache_deleted");
-                _bpMissing = errorCode + "35\n" + Translate("/bp_missing");
-                _settingsMissing = errorCode + "36\n" + Translate("/settings_missing");
-                _switchSSSError = errorCode + "37\n" + Translate("/switch_sss_error");
-                _askBackup = errorCode + "38\n" + Translate("/ask_backup");
+                _pwIsAlreadyRunning = errorCode + "27\n" + Translate("PWIsAlreadyRunning");
+                _launcherIsAlreadyRunning = errorCode + "28\n" + Translate("LauncherIsAlreadyRunning");
+                _backupMissing = errorCode + "29\n" + Translate("BackupMissing");
+                _resetSettings = errorCode + "30\n" + Translate("ResetSettings");
+                _resetSettingsSuccess = errorCode + "31\n" + Translate("ResetSettingsSuccess");
+                _overwriteBackup = errorCode + "32\n" + Translate("OverwriteBackup");
+                _backupCreated = errorCode + "33\n" + Translate("BackupCreated");
+                _noCacheFound = errorCode + "34\n" + Translate("NoCacheFound");
+                _cacheDeleted = errorCode + "35\n" + Translate("CacheDeleted");
+                _bpMissing = errorCode + "36\n" + Translate("BPMissing");
+                _settingsMissing = errorCode + "37\n" + Translate("SettingsMissing");
+                _switchSSSError = errorCode + "38\n" + Translate("SwitchSSSError");
+                _askSettingsBackup = errorCode + "39\n" + Translate("AskSettingsBackup");
 
-                _isFirstLaunch = bool.TryParse(_localization.SelectSingleNode("/launcher_db/launcher_misc/is_first_launch").InnerText, out bool b);
+                bool firstLaunch;
+                bool.TryParse(_launcherDB.SelectSingleNode("/LauncherDB/LauncherMisc/IsFirstLaunch").InnerText, out firstLaunch);
+                _firstLaunch = firstLaunch;
 
-                _enabledMods = _localization.SelectSingleNode("/launcher_db/launcher_misc/enabled_mods").InnerText;
+                _enabledMods = _launcherDB.SelectSingleNode("/LauncherDB/LauncherMisc/EnabledMods").InnerText;
             }
         }
 
@@ -893,27 +968,25 @@ namespace MIRAGE_Launcher.ViewModel
 
         public string Translate(string text)
         {
-            return _localization.DocumentElement.SelectSingleNode("/launcher_db/launcher_localization" + text).InnerText;
+            return _launcherDB.DocumentElement.SelectSingleNode("/LauncherDB/LauncherLocalization/" + text).InnerText;
         }
 
-        public void SaveToDB(string name, string value)
+        public static void SaveEnabledModsToDB(string name, string value)
         {
-            _localization.DocumentElement.SelectSingleNode("/launcher_db/launcher_misc" + name).InnerText = value;
-            _localization.Save(_launcherDBPath);
+            _launcherDB.DocumentElement.SelectSingleNode("/LauncherDB/LauncherMisc/" + name).InnerText = value;
+            _launcherDB.Save(_launcherDBPath);
         }
 
-        private void OnFirstLaunch()
+        private string OnFirstLaunch()
         {
-            bool pwFontsCheck = false;
-            bool bpCheck = false;
-            bool settingsCheck = false;
+            string firstLaunchError = "";
 
             /*
             #region Check for Tages drivers
             string tagesDir = Environment.SystemDirectory;
             if (!File.Exists(tagesDir + "/atksgt.sys") || !File.Exists(tagesDir + "/lirsgt.sys"))
             {
-                _firstLaunchError += "Tages drivers not found in\n" + tagesDir + "\n\n";
+                firstLaunchError += "Tages drivers not found in\n" + tagesDir + "\n\n";
             }
             #endregion
 
@@ -928,7 +1001,7 @@ namespace MIRAGE_Launcher.ViewModel
                         byte[] exeMD5 = MD5.ComputeHash(stream);
                         if (win7FixExeMD5.SequenceEqual(exeMD5) == false)
                         {
-                            _firstLaunchError += "Install Win7Fix\n\n";
+                            firstLaunchError += "Install Win7Fix\n\n";
                         }
                     }
                 }
@@ -942,73 +1015,66 @@ namespace MIRAGE_Launcher.ViewModel
 
             #region Check for PW fonts
             string fontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
-            if (File.Exists($"{fontsDir}/trebuc.ttf") && File.Exists($"{fontsDir}/trebucbd.ttf") && File.Exists($"{fontsDir}/trebucbi.ttf") && File.Exists($"{fontsDir}/trebucit.ttf"))
+            if (!File.Exists($"{fontsDir}/trebuc.ttf") && !File.Exists($"{fontsDir}/trebucbd.ttf") && !File.Exists($"{fontsDir}/trebucbi.ttf") && !File.Exists($"{fontsDir}/trebucit.ttf"))
             {
-                pwFontsCheck = true;
-            }
-            else
-            {
-                _firstLaunchError += _pwFontsMissing + "\n\n";
+                firstLaunchError += _pwFontsMissing + "\n\n";
             }
             #endregion
 
             #region Check for BP
             if (Directory.Exists(_paraworldDir))
             {
-                if (Directory.Exists(_paraworldDir + "/Data/BoosterPack1"))
+                if (!Directory.Exists(_paraworldDir + "/Data/BoosterPack1"))
                 {
-                    bpCheck = true;
-                }
-                else
-                {
-                    _firstLaunchError += _bpMissing + "\n\n";
+                    firstLaunchError += _bpMissing + "\n\n";
                 }
             }
             #endregion
 
             #region Check for settings.cfg
-            if (Directory.Exists(_settingsDir) && File.Exists(_settingsPath))
+            if (!Directory.Exists(_settingsDir) && !File.Exists(_settingsPath))
             {
-                settingsCheck = true;
-            }
-            else
-            {
-                _firstLaunchError += _settingsMissing + "\n\n";
+                firstLaunchError += _settingsMissing + "\n\n";
             }
             #endregion
 
-            if (pwFontsCheck && bpCheck && settingsCheck)
-            {
-                SaveToDB("/is_first_launch", false.ToString());
-            }
+            return firstLaunchError;
         }
 
-        public void VersionCheck(string version)
+        public void VersionCheck(string version, string latestVersionURL)
         {
-            Version mirageVersion = new Version(version);
-            using (WebClient versionPage = new WebClient())
+            if (!string.IsNullOrEmpty(version) && !string.IsNullOrEmpty(latestVersionURL))
             {
-                versionPage.Proxy = new WebProxy();
-                //string FullSiteVersion = VersionPage.DownloadString("https://para-welt.com/mirage/version.txt");
-                string siteVersionFull = versionPage.DownloadString("https://raw.githubusercontent.com/Tatsukio/MIRAGE-Launcher/master/Res/updateinfo.txt");
-                //versioncheck	MIRAGE 2.6.2	14	0
-                string[] siteVersion = siteVersionFull.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                if (siteVersion[0] == "versioncheck" && siteVersion != null)
+                Version mirageVersion = new Version(version);
+                
+                using (WebClient versionPage = new WebClient())
                 {
-                    string[] siteModVersion = siteVersion[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    Version mirageSiteVersion = new Version(siteModVersion[1]);
-                    switch (mirageVersion.CompareTo(mirageSiteVersion))
+                    versionPage.Proxy = new WebProxy();
+                    //string FullSiteVersion = versionPage.DownloadString("https://para-welt.com/mirage/version.txt");
+                    //string siteVersionFull = versionPage.DownloadString("https://raw.githubusercontent.com/Tatsukio/MIRAGE-Launcher/master/Resources/updateinfo.txt");
+                    //versioncheck	MIRAGE 2.6.2	14	0
+                    string siteVersionFull = versionPage.DownloadString(latestVersionURL);
+                    //MessageBox.Show(siteVersionFull, null, MessageBoxButton.OK, MessageBoxImage.Error);
+                    string[] siteVersion = siteVersionFull.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    
+                    if (siteVersion[0] == "versioncheck" && siteVersion != null)
                     {
-                        case 0:
-                            //MirageVersion == MirageSiteVersion
-                            break;
-                        case 1:
-                            //MirageVersion > MirageSiteVersion
-                            break;
-                        case -1:
-                            UpdateLogText = "● " + siteVersion[4].Replace(";", "\n● ");
-                            ShowUpdateWindow = true;
-                            break;
+                        string[] siteModVersion = siteVersion[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        Version mirageSiteVersion = new Version(siteModVersion[1]);
+                        switch (mirageVersion.CompareTo(mirageSiteVersion))
+                        {
+                            case 0:
+                                //MirageVersion == MirageSiteVersion
+                                break;
+                            case 1:
+                                //MirageVersion > MirageSiteVersion
+                                break;
+                            case -1:
+                                UpdateLogText = "● " + siteVersion[4].Replace(";", "\n● ");
+                                MessageBox.Show(UpdateLogText, null, MessageBoxButton.OK, MessageBoxImage.Error);
+                                ShowUpdateWindow = true;
+                                break;
+                        }
                     }
                 }
             }
@@ -1104,7 +1170,8 @@ namespace MIRAGE_Launcher.ViewModel
                 if (string.IsNullOrEmpty(missingMods))
                 {
                     string enabledMods = string.Join(",", ModList.Except(requiresList));
-                    return enabledMods;
+                    string commandLine = " -enable " + string.Join(" -enable ", enabledMods.Split(','));
+                    return commandLine;
                 }
                 else
                 {
@@ -1114,12 +1181,5 @@ namespace MIRAGE_Launcher.ViewModel
             }
             return string.Empty;
         }
-
-        public static string GetCommandLine(string enabledMods)
-        {
-            string commandLine = " -enable " + string.Join(" -enable ", enabledMods.Split(','));
-            return commandLine;
-        }
-
     }
 }
